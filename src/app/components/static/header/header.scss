@@ -1,0 +1,29 @@
+@use 'variables' as global;
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2rem 2rem 1rem 2rem;
+
+  h1 {
+    color: global.$text-main;
+    font-size: 1.8rem;
+    margin: 0;
+  }
+
+  .btn-add {
+    background: global.$primary-color;
+    color: white;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: opacity 0.2s;
+
+    &:hover {
+      opacity: 0.9;
+    }
+  }
+}

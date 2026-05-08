@@ -3,11 +3,14 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing-module';
 import { App } from './app';
+import { Header } from './components/static/header/header';
+import { Body } from './components/static/body/body';
+import { Footer } from './components/static/footer/footer';
 
 @NgModule({
-  declarations: [App],
+  declarations: [App, Header, Body, Footer],
   imports: [BrowserModule, AppRoutingModule],
   providers: [provideBrowserGlobalErrorListeners()],
   bootstrap: [App],
 })
-export class AppModule { }
+export class AppModule {}
