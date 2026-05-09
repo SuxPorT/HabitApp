@@ -1,5 +1,11 @@
 @use 'variables' as global;
 
-h1 {
-  color: global.$text-main !important;
+.header-container {
+  background-color: global.$surface-low;
+  padding: 1.5rem;
+}
+
+.header-title {
+  font-size: 1.75rem;
+  color: global.$text-main;
 }

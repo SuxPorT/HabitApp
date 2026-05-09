@@ -1,5 +1,17 @@
 @use 'variables' as global;
 
-a:hover {
-  color: global.$primary-color !important;
+.footer-bar {
+  background-color: global.$surface-low;
+  height: 60px;
+}
+
+.footer-link {
+  text-decoration: none;
+  font-size: 0.875rem;
+  color: global.$text-muted;
+  transition: color 0.2s;
+
+  &:hover {
+    color: global.$primary-color;
+  }
 }

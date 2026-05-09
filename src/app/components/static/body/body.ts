@@ -17,14 +17,14 @@ export class Body implements OnInit {
   constructor(
     private habitService: HabitService,
     private dialog: MatDialog
-  ) {}
+  ) { }
 
   ngOnInit(): void {
-    this.listHabits();
-  }
-
-  listHabits(): void {
-    this.habitService.getHabits().subscribe((data: Habit[]) => this.habits = data);
+    this.habitService.getHabits().subscribe({
+      next: (data: Habit[]) => {
+        this.habits = data;
+      }
+    });
   }
 
   openNewHabitDialog(habit?: Habit): void {
@@ -34,7 +34,7 @@ export class Body implements OnInit {
       panelClass: 'custom-dialog-container'
     });
 
-    dialogRef.afterClosed().subscribe((result) => {
+    dialogRef.afterClosed().subscribe((result?: Habit) => {
       if (result) {
         this.handleSave(result);
       }
@@ -43,9 +43,9 @@ export class Body implements OnInit {
 
   handleSave(habitData: any): void {
     if (habitData.id) {
-      this.habitService.updateHabit(habitData).subscribe(() => this.listHabits());
+      this.habitService.updateHabit(habitData).subscribe();
     } else {
-      this.habitService.addHabit(habitData).subscribe(() => this.listHabits());
+      this.habitService.addHabit(habitData).subscribe();
     }
   }
 

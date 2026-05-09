@@ -16,13 +16,11 @@ html {
 }
 
 body {
-  color-scheme: light;
-  background-color: var(--mat-sys-surface);
-  color: var(--mat-sys-on-surface);
-  font: var(--mat-sys-body-medium);
   margin: 0;
   padding: 0;
   height: 100%;
+  color-scheme: light;
   background-color: global.$bg-color;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: global.$text-main;
+  font-family: 'Segoe UI', Roboto, sans-serif;
 }

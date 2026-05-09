@@ -1,49 +1,41 @@
 @use 'variables' as global;
 
-:host {
-  display: block;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
-.btn-primary {
-  background-color: global.$primary-color !important;
-  border-color: global.$primary-color !important;
-  border-radius: 12px;
-  transition: opacity 0.2s;
-
-  &:hover {
-    opacity: 0.9;
-  }
-
-  &:disabled {
-    background-color: global.$text-muted !important;
-    border-color: global.$text-muted !important;
-    opacity: 0.5;
-  }
-}
-
-.btn-light {
-  border-radius: 12px;
-  background-color: #f1f5f9;
-}
-
-.form-control {
-  border-radius: 12px;
+.dialog-title {
   color: global.$text-main;
+  padding-top: 1rem;
+}
+
+.dialog-label {
+  font-size: 0.75rem;
+  font-weight: bold;
+  color: global.$text-muted;
+  text-transform: uppercase;
+}
+
+.theme-input {
+  background-color: global.$surface-high !important;
+  color: global.$text-main;
+  border: none;
+  border-radius: 12px;
+  padding: 0.75rem;
 
   &:focus {
-    background-color: #fff !important;
+    background-color: var(--mat-sys-surface) !important;
     border: 2px solid global.$primary-color !important;
     box-shadow: none;
   }
 }
 
-label {
+.btn-cancel {
   color: global.$text-muted;
-  letter-spacing: 0.5px;
+  font-weight: 600;
+  text-decoration: none;
+  border: none;
+  background: none;
+  margin-right: 1rem;
 }
 
 ::ng-deep .mat-mdc-dialog-container .mdc-dialog__surface {
-  border-radius: 20px !important;
-  background-color: global.$card-bg !important;
+  border-radius: 24px !important;
+  background-color: global.$surface-low !important;
 }

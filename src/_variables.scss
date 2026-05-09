@@ -1,6 +1,8 @@
-$primary-color: #6366f1;
-$bg-color: #f8fafc;
-$card-bg: #ffffff;
-$text-main: #1e293b;
-$text-muted: #64748b;
-$border-color: #e2e8f0;
+$primary-color: var(--mat-sys-primary);
+$on-primary: var(--mat-sys-on-primary);
+$bg-color: var(--mat-sys-surface-container-lowest);
+$surface-low: var(--mat-sys-surface-container-low);
+$surface-high: var(--mat-sys-surface-container-high);
+$text-main: var(--mat-sys-on-surface);
+$text-muted: var(--mat-sys-on-surface-variant);
+$outline: var(--mat-sys-outline-variant);
