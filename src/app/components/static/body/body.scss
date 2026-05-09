@@ -71,3 +71,30 @@
     border-color: global.$primary-color;
   }
 }
+
+.btn-action {
+  border: none;
+  background: transparent;
+  padding: 8px;
+  border-radius: 8px;
+  transition: background-color 0.2s;
+  font-size: 1.1rem;
+  line-height: 1;
+
+  &:hover {
+    background-color: global.$surface-high;
+  }
+
+  &.edit:hover {
+    color: global.$primary-color;
+  }
+
+  &.delete:hover {
+    color: #dc3545;
+    background-color: rgba(220, 53, 69, 0.1);
+  }
+}
+
+.border-end {
+  border-color: global.$outline !important;
+}

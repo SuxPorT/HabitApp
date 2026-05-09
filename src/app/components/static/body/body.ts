@@ -56,4 +56,10 @@ export class Body implements OnInit {
       this.habitService.updateHabit(habit).subscribe();
     }
   }
+
+  deleteHabit(id: number): void {
+    if (confirm('Tem certeza que deseja excluir este hábito?')) {
+      this.habitService.deleteHabit(id).subscribe();
+    }
+  }
 }
