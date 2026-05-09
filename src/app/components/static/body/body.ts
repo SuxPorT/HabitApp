@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { Habit } from '../../../../models/habit.model';
+import { HabitDialog } from '../../views/habit-dialog/habit-dialog';
 import { HabitService } from '../../../services/habit-service';
 
 @Component({
@@ -12,32 +14,46 @@ export class Body implements OnInit {
   weekDays: string[] = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
   habits: Habit[] = [];
 
-  constructor(private habitService: HabitService) { }
+  constructor(
+    private habitService: HabitService,
+    private dialog: MatDialog
+  ) {}
 
   ngOnInit(): void {
     this.listHabits();
   }
 
   listHabits(): void {
-    this.habitService.getHabits().subscribe({
-      next: (data: Habit[]) => this.habits = data,
-      error: (err: any) => console.error('Erro ao carregar hábitos: ', err)
+    this.habitService.getHabits().subscribe((data: Habit[]) => this.habits = data);
+  }
+
+  openNewHabitDialog(habit?: Habit): void {
+    const dialogRef = this.dialog.open(HabitDialog, {
+      width: '450px',
+      data: habit ? { ...habit } : null,
+      panelClass: 'custom-dialog-container'
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.handleSave(result);
+      }
     });
   }
 
-  toggleHabit(habitId: number, dayIndex: number): void {
-    const habit = this.habits.find(h => h.id === habitId);
+  handleSave(habitData: any): void {
+    if (habitData.id) {
+      this.habitService.updateHabit(habitData).subscribe(() => this.listHabits());
+    } else {
+      this.habitService.addHabit(habitData).subscribe(() => this.listHabits());
+    }
+  }
 
+  toggleHabit(habitId: number, dayIndex: number): void {
+    const habit = this.habits.find((h: Habit) => h.id === habitId);
     if (habit) {
       habit.completedDays[dayIndex] = !habit.completedDays[dayIndex];
-
-      this.habitService.updateHabit(habit).subscribe({
-        next: (updated: Habit) => console.log('Hábito atualizado: ', updated.title),
-        error: (err: any) => {
-          habit.completedDays[dayIndex] = !habit.completedDays[dayIndex];
-          console.error('Erro ao salvar alteração: ', err);
-        }
-      });
+      this.habitService.updateHabit(habit).subscribe();
     }
   }
 }

@@ -1,0 +1,49 @@
+@use 'variables' as global;
+
+:host {
+  display: block;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.btn-primary {
+  background-color: global.$primary-color !important;
+  border-color: global.$primary-color !important;
+  border-radius: 12px;
+  transition: opacity 0.2s;
+
+  &:hover {
+    opacity: 0.9;
+  }
+
+  &:disabled {
+    background-color: global.$text-muted !important;
+    border-color: global.$text-muted !important;
+    opacity: 0.5;
+  }
+}
+
+.btn-light {
+  border-radius: 12px;
+  background-color: #f1f5f9;
+}
+
+.form-control {
+  border-radius: 12px;
+  color: global.$text-main;
+
+  &:focus {
+    background-color: #fff !important;
+    border: 2px solid global.$primary-color !important;
+    box-shadow: none;
+  }
+}
+
+label {
+  color: global.$text-muted;
+  letter-spacing: 0.5px;
+}
+
+::ng-deep .mat-mdc-dialog-container .mdc-dialog__surface {
+  border-radius: 20px !important;
+  background-color: global.$card-bg !important;
+}

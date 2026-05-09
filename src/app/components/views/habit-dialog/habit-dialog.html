@@ -1,0 +1,45 @@
+<h2 mat-dialog-title class="fw-bold border-0 pt-2">
+  {{ data?.id ? 'Editar Hábito' : 'Novo Hábito' }}
+</h2>
+
+<mat-dialog-content class="px-1">
+  <form #habitForm="ngForm">
+    <div class="mb-3">
+      <label class="form-label small fw-bold text-muted text-uppercase">Nome do Hábito</label>
+      <input
+        type="text"
+        class="form-control form-control-lg bg-light border-0 shadow-none"
+        placeholder="Ex: Beber Água"
+        [(ngModel)]="formData.title"
+        name="title"
+        required
+      />
+    </div>
+
+    <div class="mb-2">
+      <label class="form-label small fw-bold text-muted text-uppercase">Ícone (Emoji)</label>
+      <input
+        type="text"
+        class="form-control form-control-lg bg-light border-0 shadow-none text-center"
+        placeholder="💧"
+        [(ngModel)]="formData.icon"
+        name="icon"
+        required
+      />
+    </div>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" class="pb-3 px-1 border-0">
+  <button type="button" class="btn btn-light px-4 fw-semibold text-muted me-2" (click)="onClose()">
+    Cancelar
+  </button>
+  <button
+    type="button"
+    class="btn btn-primary px-4 fw-semibold shadow-sm"
+    [disabled]="!formData.title || !formData.icon"
+    (click)="onSave()"
+  >
+    {{ data?.id ? 'Salvar Alterações' : 'Criar Hábito' }}
+  </button>
+</mat-dialog-actions>

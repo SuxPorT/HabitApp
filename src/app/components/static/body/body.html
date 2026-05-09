@@ -1,5 +1,5 @@
 <div class="container pb-5 mb-5">
-  <section class="row g-2 text-center bg-white p-3 rounded shadow-sm mb-5 mx-0">
+  <section class="row g-2 text-center bg-white p-3 rounded shadow-sm mb-4 mx-0">
     <div *ngFor="let day of weekDays; let i = index" class="col">
       <small class="text-muted d-block mb-1">{{ day }}</small>
       <div
@@ -10,9 +10,19 @@
     </div>
   </section>
 
+  <div class="d-flex justify-content-end mb-4">
+    <button
+      (click)="openNewHabitDialog()"
+      class="btn btn-primary px-4 py-2 fw-semibold shadow-sm"
+      style="border-radius: 12px"
+    >
+      + Novo Hábito
+    </button>
+  </div>
+
   <main class="row g-3">
     <div *ngFor="let habit of habits" class="col-12">
-      <div class="card border-0 shadow-sm p-3">
+      <div class="card border-0 shadow-sm p-3" (dblclick)="openNewHabitDialog(habit)">
         <div class="d-flex justify-content-between align-items-center">
           <div class="d-flex align-items-center">
             <div class="bg-light p-3 rounded-3 me-3 fs-4">{{ habit.icon }}</div>

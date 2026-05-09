@@ -4,4 +4,7 @@ export interface Habit {
   icon: string;
   streak: number;
   completedDays: boolean[];
+  createdAt: Date;
+  modifiedAt: Date;
+  isDeleted: boolean;
 }
