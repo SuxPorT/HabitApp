@@ -5,6 +5,6 @@ export interface Habit {
   streak: number;
   completedDays: boolean[];
   createdAt: Date;
-  modifiedAt: Date;
+  modifiedAt?: Date;
   isDeleted: boolean;
 }

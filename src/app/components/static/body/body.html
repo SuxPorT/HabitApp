@@ -19,6 +19,9 @@
           <div class="d-flex align-items-center">
             <div class="habit-icon-wrapper me-3">{{ habit.icon }}</div>
             <div>
+              <small class="text-muted d-block habit-date">
+                Criado em: {{ habit.createdAt | date: 'dd/MM/yyyy HH:mm' }}
+              </small>
               <h3 class="habit-name mb-1 fw-bold">{{ habit.title }}</h3>
               <p class="small text-muted mb-0">{{ habit.streak }} dias seguidos</p>
             </div>
@@ -28,6 +31,7 @@
             <div class="d-flex gap-2 border-end pe-3">
               <button
                 *ngFor="let done of habit.completedDays; let j = index"
+                type="button"
                 (click)="toggleHabit(habit.id, j)"
                 class="status-dot"
                 [class.completed]="done"
@@ -35,16 +39,8 @@
             </div>
 
             <div class="action-buttons d-flex gap-1">
-              <button
-                class="btn btn-action edit"
-                (click)="openNewHabitDialog(habit)"
-                title="Editar"
-              >
-                ✏️
-              </button>
-              <button class="btn btn-action delete" (click)="deleteHabit(habit.id)" title="Excluir">
-                🗑️
-              </button>
+              <button class="btn btn-action edit" (click)="openNewHabitDialog(habit)">✏️</button>
+              <button class="btn btn-action delete" (click)="deleteHabit(habit.id)">🗑️</button>
             </div>
           </div>
         </div>

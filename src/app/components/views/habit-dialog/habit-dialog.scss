@@ -10,29 +10,86 @@
   font-weight: bold;
   color: global.$text-muted;
   text-transform: uppercase;
+  margin-bottom: 0.5rem;
+  display: block;
 }
 
 .theme-input {
   background-color: global.$surface-high !important;
   color: global.$text-main;
-  border: none;
+  border: 2px solid transparent;
   border-radius: 12px;
   padding: 0.75rem;
+  transition: all 0.2s;
 
   &:focus {
     background-color: var(--mat-sys-surface) !important;
     border: 2px solid global.$primary-color !important;
     box-shadow: none;
   }
+
+  &.ng-invalid.ng-touched {
+    border: 2px solid #ff5252 !important;
+  }
+}
+
+.icon-selection-grid {
+  background-color: global.$surface-high;
+  padding: 1rem;
+  border-radius: 16px;
+}
+
+.icon-choice-btn {
+  width: 45px;
+  height: 45px;
+  border-radius: 10px;
+  border: 2px solid transparent;
+  background: global.$surface-low;
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+
+  &:hover {
+    background-color: global.$outline;
+  }
+
+  &.selected {
+    border-color: global.$primary-color;
+    background-color: var(--mat-sys-surface);
+    transform: scale(1.1);
+  }
+}
+
+.error-text {
+  color: #ff5252;
+  font-size: 0.7rem;
+  margin-top: 4px;
+  font-weight: 500;
 }
 
 .btn-cancel {
   color: global.$text-muted;
   font-weight: 600;
-  text-decoration: none;
   border: none;
   background: none;
   margin-right: 1rem;
+}
+
+.btn-habit-primary {
+  background-color: global.$primary-color;
+  color: global.$on-primary;
+  border: none;
+  border-radius: 12px;
+  padding: 0.5rem 1.5rem;
+  font-weight: 600;
+
+  &:disabled {
+    opacity: 0.5;
+    filter: grayscale(1);
+    cursor: not-allowed;
+  }
 }
 
 ::ng-deep .mat-mdc-dialog-container .mdc-dialog__surface {

@@ -20,9 +20,13 @@ export class Body implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.loadHabits();
+  }
+
+  loadHabits(): void {
     this.habitService.getHabits().subscribe({
       next: (data: Habit[]) => {
-        this.habits = data;
+        this.habits = [...data];
       }
     });
   }
@@ -42,24 +46,49 @@ export class Body implements OnInit {
   }
 
   handleSave(habitData: any): void {
-    if (habitData.id) {
-      this.habitService.updateHabit(habitData).subscribe();
-    } else {
-      this.habitService.addHabit(habitData).subscribe();
-    }
+    const action = habitData.id
+      ? this.habitService.updateHabit(habitData)
+      : this.habitService.addHabit(habitData);
+
+    action.subscribe({
+      next: () => this.loadHabits()
+    });
   }
 
   toggleHabit(habitId: number, dayIndex: number): void {
-    const habit = this.habits.find((h: Habit) => h.id === habitId);
+    const habit = this.habits.find(h => h.id === habitId);
     if (habit) {
-      habit.completedDays[dayIndex] = !habit.completedDays[dayIndex];
-      this.habitService.updateHabit(habit).subscribe();
+      const updatedHabit = {
+        ...habit,
+        completedDays: [...habit.completedDays]
+      };
+
+      updatedHabit.completedDays[dayIndex] = !updatedHabit.completedDays[dayIndex];
+      updatedHabit.streak = this.calculateStreak(updatedHabit.completedDays);
+
+      this.habitService.updateHabit(updatedHabit).subscribe({
+        next: () => this.loadHabits()
+      });
     }
   }
 
+  calculateStreak(completedDays: boolean[]): number {
+    let streak = 0;
+    for (let i = completedDays.length - 1; i >= 0; i--) {
+      if (completedDays[i]) {
+        streak++;
+      } else {
+        break;
+      }
+    }
+    return streak;
+  }
+
   deleteHabit(id: number): void {
-    if (confirm('Tem certeza que deseja excluir este hábito?')) {
-      this.habitService.deleteHabit(id).subscribe();
+    if (confirm('Deseja excluir este hábito?')) {
+      this.habitService.deleteHabit(id).subscribe({
+        next: () => this.loadHabits()
+      });
     }
   }
 }

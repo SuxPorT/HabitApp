@@ -15,6 +15,10 @@ export class HabitDialog implements OnInit {
     completedDays: [false, false, false, false, false, false, false]
   };
 
+  iconSuggestions: string[] = [
+    '💧', '🏃', '📚', '🧘', '🍎', '💪', '💊', '🛌', '🚭', '🌱', '🎨', '💻'
+  ];
+
   constructor(
     public dialogRef: MatDialogRef<HabitDialog>,
     @Inject(MAT_DIALOG_DATA) public data: Habit | null
@@ -26,8 +30,14 @@ export class HabitDialog implements OnInit {
     }
   }
 
+  selectIcon(icon: string): void {
+    this.formData.icon = icon;
+  }
+
   onSave(): void {
-    this.dialogRef.close(this.formData);
+    if (this.formData.title && this.formData.icon) {
+      this.dialogRef.close(this.formData);
+    }
   }
 
   onClose(): void {

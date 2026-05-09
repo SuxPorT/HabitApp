@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, delay, Observable, of } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { Habit } from '../../models/habit.model';
 
 @Injectable({
@@ -7,11 +7,9 @@ import { Habit } from '../../models/habit.model';
 })
 export class HabitService {
   private readonly STORAGE_KEY = 'habitapp_data';
-  private habitsSubject = new BehaviorSubject<Habit[]>([]);
 
   constructor() {
     this.initStorage();
-    this.refreshList();
   }
 
   private initStorage(): void {
@@ -20,13 +18,10 @@ export class HabitService {
     }
   }
 
-  private refreshList(): void {
-    const habits = this.getRawHabits().filter((h: Habit) => !h.isDeleted);
-    this.habitsSubject.next([...habits]);
-  }
-
   getHabits(): Observable<Habit[]> {
-    return this.habitsSubject.asObservable().pipe(delay(0));
+    const data = localStorage.getItem(this.STORAGE_KEY);
+    const habits = data ? JSON.parse(data) : [];
+    return of(habits.filter((h: Habit) => !h.isDeleted));
   }
 
   addHabit(habit: Habit): Observable<Habit> {
@@ -34,33 +29,33 @@ export class HabitService {
     const newHabit: Habit = {
       ...habit,
       id: habits.length > 0 ? Math.max(...habits.map(h => h.id)) + 1 : 1,
+      streak: 0,
       createdAt: new Date(),
-      modifiedAt: new Date(),
       isDeleted: false
     };
     habits.push(newHabit);
     this.saveRawHabits(habits);
-    this.refreshList();
     return of(newHabit);
   }
 
   updateHabit(updatedHabit: Habit): Observable<Habit> {
-    let habits = this.getRawHabits();
+    const habits = this.getRawHabits();
     updatedHabit.modifiedAt = new Date();
-    habits = habits.map(h => h.id === updatedHabit.id ? updatedHabit : h);
-    this.saveRawHabits(habits);
-    this.refreshList();
+    const index = habits.findIndex(h => h.id === updatedHabit.id);
+    if (index !== -1) {
+      habits[index] = { ...updatedHabit };
+      this.saveRawHabits(habits);
+    }
     return of(updatedHabit);
   }
 
   deleteHabit(id: number): Observable<boolean> {
     const habits = this.getRawHabits();
-    const habitIndex = habits.findIndex(h => h.id === id);
-    if (habitIndex !== -1) {
-      habits[habitIndex].isDeleted = true;
-      habits[habitIndex].modifiedAt = new Date();
+    const index = habits.findIndex(h => h.id === id);
+    if (index !== -1) {
+      habits[index].isDeleted = true;
+      habits[index].modifiedAt = new Date();
       this.saveRawHabits(habits);
-      this.refreshList();
       return of(true);
     }
     return of(false);

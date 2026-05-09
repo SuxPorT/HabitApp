@@ -4,25 +4,39 @@
 
 <mat-dialog-content class="dialog-content">
   <form #habitForm="ngForm">
-    <div class="mb-3">
+    <div class="mb-4">
       <label class="form-label dialog-label">Nome do Hábito</label>
       <input
         type="text"
         class="form-control theme-input"
         [(ngModel)]="formData.title"
         name="title"
+        #title="ngModel"
         required
+        placeholder="Ex: Beber água"
       />
+      <div *ngIf="title.invalid && (title.dirty || title.touched)" class="error-text">
+        O nome é obrigatório.
+      </div>
     </div>
+
     <div class="mb-2">
-      <label class="form-label dialog-label">Ícone (Emoji)</label>
-      <input
-        type="text"
-        class="form-control theme-input text-center"
-        [(ngModel)]="formData.icon"
-        name="icon"
-        required
-      />
+      <label class="form-label dialog-label">Escolha um Ícone</label>
+      <div class="icon-selection-grid d-flex flex-wrap gap-2 justify-content-between">
+        <button
+          type="button"
+          *ngFor="let icon of iconSuggestions"
+          class="icon-choice-btn"
+          [class.selected]="formData.icon === icon"
+          (click)="selectIcon(icon)"
+        >
+          {{ icon }}
+        </button>
+      </div>
+      <input type="hidden" [(ngModel)]="formData.icon" name="icon" required #iconHidden="ngModel" />
+      <div *ngIf="!formData.icon && habitForm.submitted" class="error-text">
+        Selecione um ícone.
+      </div>
     </div>
   </form>
 </mat-dialog-content>
@@ -32,7 +46,7 @@
   <button
     type="button"
     class="btn btn-habit-primary px-4 shadow-sm"
-    [disabled]="!formData.title || !formData.icon"
+    [disabled]="habitForm.invalid || !formData.icon"
     (click)="onSave()"
   >
     {{ data?.id ? 'Salvar' : 'Criar' }}
