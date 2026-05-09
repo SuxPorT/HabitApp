@@ -1,28 +1,37 @@
-<div class="dashboard-container">
-  <section class="week-overview">
-    <div *ngFor="let day of weekDays; let i = index" class="day-column">
-      <span class="day-label">{{ day }}</span>
-      <div class="day-dot" [class.active]="i === 3"></div>
+<div class="container pb-5 mb-5">
+  <section class="row g-2 text-center bg-white p-3 rounded shadow-sm mb-5 mx-0">
+    <div *ngFor="let day of weekDays; let i = index" class="col">
+      <small class="text-muted d-block mb-1">{{ day }}</small>
+      <div
+        class="rounded-circle mx-auto"
+        [ngClass]="i === 3 ? 'bg-primary' : 'bg-light border'"
+        style="width: 10px; height: 10px"
+      ></div>
     </div>
   </section>
 
-  <main class="habit-list">
-    <div *ngFor="let habit of habits" class="habit-card">
-      <div class="habit-info">
-        <span class="habit-icon">{{ habit.icon }}</span>
-        <div>
-          <h3>{{ habit.title }}</h3>
-          <p>{{ habit.streak }} dias seguidos</p>
-        </div>
-      </div>
+  <main class="row g-3">
+    <div *ngFor="let habit of habits" class="col-12">
+      <div class="card border-0 shadow-sm p-3">
+        <div class="d-flex justify-content-between align-items-center">
+          <div class="d-flex align-items-center">
+            <div class="bg-light p-3 rounded-3 me-3 fs-4">{{ habit.icon }}</div>
+            <div>
+              <h3 class="h6 mb-1 fw-bold">{{ habit.title }}</h3>
+              <p class="small text-muted mb-0">{{ habit.streak }} dias seguidos</p>
+            </div>
+          </div>
 
-      <div class="habit-week-status">
-        <button
-          *ngFor="let done of habit.completedDays; let j = index"
-          class="status-circle"
-          [class.completed]="done"
-          (click)="toggleHabit(habit.id, j)"
-        ></button>
+          <div class="d-flex gap-2">
+            <button
+              *ngFor="let done of habit.completedDays; let j = index"
+              (click)="toggleHabit(habit.id, j)"
+              [ngClass]="done ? 'btn btn-primary' : 'btn btn-outline-light border text-dark'"
+              class="rounded-circle d-flex align-items-center justify-content-center"
+              style="width: 35px; height: 35px; padding: 0"
+            ></button>
+          </div>
+        </div>
       </div>
     </div>
   </main>

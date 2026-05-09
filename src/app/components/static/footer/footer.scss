@@ -1,41 +1,5 @@
 @use 'variables' as global;
 
-.app-footer {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  padding: 1rem 2rem;
-  background-color: global.$card-bg;
-  border-top: 1px solid global.$border-color;
-  color: global.$text-muted;
-  z-index: 1000;
-
-  .footer-content {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-
-  p {
-    margin: 0;
-    font-size: 0.9rem;
-  }
-
-  .footer-links {
-    display: flex;
-    gap: 1.5rem;
-
-    a {
-      color: global.$text-muted;
-      text-decoration: none;
-      font-size: 0.85rem;
-
-      &:hover {
-        color: global.$primary-color;
-      }
-    }
-  }
+a:hover {
+  color: global.$primary-color !important;
 }
