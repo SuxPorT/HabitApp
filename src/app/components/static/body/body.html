@@ -3,19 +3,30 @@
     @for (day of weekDays; track day; let i = $index) {
       <div class="col text-center">
         <small class="text-muted d-block mb-1">{{ day }}</small>
-        <div class="day-indicator mx-auto" [class.active]="i === 3"></div>
+        <div class="day-indicator mx-auto" [class.active]="i === currentDayIndex"></div>
       </div>
     }
   </section>
 
-  <div class="d-flex justify-content-end mb-4">
-    <button (click)="openNewHabitDialog()" class="btn btn-habit-primary shadow-sm">
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-3 mb-4">
+    <div class="search-container flex-grow-1">
+      <input
+        type="text"
+        class="form-control theme-input search-input"
+        placeholder="🔍 Pesquisar hábitos..."
+        [formControl]="filterControl"
+      />
+    </div>
+    <button
+      (click)="openNewHabitDialog()"
+      class="btn btn-habit-primary shadow-sm white-space-nowrap"
+    >
       + Novo Hábito
     </button>
   </div>
 
   <main class="row g-3">
-    @for (habit of habits$ | async; track habit.id) {
+    @for (habit of filteredHabits$ | async; track habit.id) {
       <div class="col-12">
         <div class="card habit-card border-0 shadow-sm">
           <div class="card-body d-flex justify-content-between align-items-center">
@@ -23,7 +34,7 @@
               <div class="habit-icon-wrapper me-3">{{ habit.icon }}</div>
               <div>
                 <small class="text-muted d-block habit-date">
-                  Criado em: {{ habit.createdAt | date: 'dd/MM/yyyy HH:mm' }}
+                  Criado em: {{ habit.createdAt | date: 'dd/MM/yyyy - HH:mm' }}
                 </small>
                 <h3 class="habit-name mb-1 fw-bold">{{ habit.title }}</h3>
                 <p class="small text-muted mb-0">{{ habit.streak }} dias seguidos</p>
@@ -38,6 +49,7 @@
                     (click)="toggleHabit(habit.id, j)"
                     class="status-dot"
                     [class.completed]="done"
+                    [disabled]="j > 0 && !habit.completedDays[j - 1]"
                   ></button>
                 }
               </div>
@@ -52,7 +64,7 @@
       </div>
     } @empty {
       <div class="col-12 text-center py-5">
-        <p class="text-muted">Nenhum hábito cadastrado ainda. Comece agora! 🚀</p>
+        <p class="text-muted">Nenhum hábito encontrado. 🔍</p>
       </div>
     }
   </main>

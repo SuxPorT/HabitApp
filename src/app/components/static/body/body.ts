@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { Observable } from 'rxjs';
+import { Observable, combineLatest } from 'rxjs';
+import { map, startWith } from 'rxjs/operators';
 import { Habit } from '../../../../models/habit.model';
 import { HabitDialog } from '../../views/habit-dialog/habit-dialog';
 import { HabitService } from '../../../services/habit-service';
@@ -13,7 +15,9 @@ import { HabitService } from '../../../services/habit-service';
 })
 export class Body implements OnInit {
   weekDays: string[] = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
-  habits$!: Observable<Habit[]>;
+  currentDayIndex: number = new Date().getDay();
+  filteredHabits$!: Observable<Habit[]>;
+  filterControl = new FormControl('', { nonNullable: true });
 
   constructor(
     private habitService: HabitService,
@@ -21,7 +25,15 @@ export class Body implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.habits$ = this.habitService.habits$;
+    this.filteredHabits$ = combineLatest([
+      this.habitService.habits$,
+      this.filterControl.valueChanges.pipe(startWith(''))
+    ]).pipe(
+      map(([habits, filterString]) => {
+        const search = filterString.toLowerCase().trim();
+        return search ? habits.filter(h => h.title.toLowerCase().includes(search)) : habits;
+      })
+    );
   }
 
   openNewHabitDialog(habit?: Habit): void {
@@ -32,9 +44,7 @@ export class Body implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe((result?: Habit) => {
-      if (result) {
-        this.handleSave(result);
-      }
+      if (result) this.handleSave(result);
     });
   }
 
@@ -42,7 +52,6 @@ export class Body implements OnInit {
     const action = habitData.id
       ? this.habitService.updateHabit(habitData)
       : this.habitService.addHabit(habitData);
-
     action.subscribe();
   }
 
@@ -51,7 +60,7 @@ export class Body implements OnInit {
   }
 
   deleteHabit(id: number): void {
-    if (confirm('Deseja excluir este hábito?')) {
+    if (confirm('Excluir hábito?')) {
       this.habitService.deleteHabit(id).subscribe();
     }
   }

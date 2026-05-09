@@ -7,14 +7,17 @@ import { Header } from './components/static/header/header';
 import { Body } from './components/static/body/body';
 import { Footer } from './components/static/footer/footer';
 import { HabitDialog } from './components/views/habit-dialog/habit-dialog';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
 import { CommonModule } from '@angular/common';
 
 @NgModule({
   declarations: [App, Header, Body, Footer, HabitDialog],
-  imports: [BrowserModule, AppRoutingModule, CommonModule, FormsModule, MatDialogModule],
+  imports: [
+    BrowserModule, AppRoutingModule, CommonModule, FormsModule,
+    ReactiveFormsModule, MatDialogModule
+  ],
   providers: [provideBrowserGlobalErrorListeners()],
   bootstrap: [App],
 })
-export class AppModule {}
+export class AppModule { }
