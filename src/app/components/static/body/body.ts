@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { Observable } from 'rxjs';
 import { Habit } from '../../../../models/habit.model';
 import { HabitDialog } from '../../views/habit-dialog/habit-dialog';
 import { HabitService } from '../../../services/habit-service';
@@ -12,7 +13,7 @@ import { HabitService } from '../../../services/habit-service';
 })
 export class Body implements OnInit {
   weekDays: string[] = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
-  habits: Habit[] = [];
+  habits$!: Observable<Habit[]>;
 
   constructor(
     private habitService: HabitService,
@@ -20,15 +21,7 @@ export class Body implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.loadHabits();
-  }
-
-  loadHabits(): void {
-    this.habitService.getHabits().subscribe({
-      next: (data: Habit[]) => {
-        this.habits = [...data];
-      }
-    });
+    this.habits$ = this.habitService.habits$;
   }
 
   openNewHabitDialog(habit?: Habit): void {
@@ -50,45 +43,16 @@ export class Body implements OnInit {
       ? this.habitService.updateHabit(habitData)
       : this.habitService.addHabit(habitData);
 
-    action.subscribe({
-      next: () => this.loadHabits()
-    });
+    action.subscribe();
   }
 
   toggleHabit(habitId: number, dayIndex: number): void {
-    const habit = this.habits.find(h => h.id === habitId);
-    if (habit) {
-      const updatedHabit = {
-        ...habit,
-        completedDays: [...habit.completedDays]
-      };
-
-      updatedHabit.completedDays[dayIndex] = !updatedHabit.completedDays[dayIndex];
-      updatedHabit.streak = this.calculateStreak(updatedHabit.completedDays);
-
-      this.habitService.updateHabit(updatedHabit).subscribe({
-        next: () => this.loadHabits()
-      });
-    }
-  }
-
-  calculateStreak(completedDays: boolean[]): number {
-    let streak = 0;
-    for (let i = completedDays.length - 1; i >= 0; i--) {
-      if (completedDays[i]) {
-        streak++;
-      } else {
-        break;
-      }
-    }
-    return streak;
+    this.habitService.toggleHabitDay(habitId, dayIndex).subscribe();
   }
 
   deleteHabit(id: number): void {
     if (confirm('Deseja excluir este hábito?')) {
-      this.habitService.deleteHabit(id).subscribe({
-        next: () => this.loadHabits()
-      });
+      this.habitService.deleteHabit(id).subscribe();
     }
   }
 }

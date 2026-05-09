@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { Observable, BehaviorSubject, of } from 'rxjs';
 import { Habit } from '../../models/habit.model';
 
 @Injectable({
@@ -7,9 +7,12 @@ import { Habit } from '../../models/habit.model';
 })
 export class HabitService {
   private readonly STORAGE_KEY = 'habitapp_data';
+  private habitsSubject = new BehaviorSubject<Habit[]>([]);
+  habits$ = this.habitsSubject.asObservable();
 
   constructor() {
     this.initStorage();
+    this.refresh();
   }
 
   private initStorage(): void {
@@ -18,10 +21,9 @@ export class HabitService {
     }
   }
 
-  getHabits(): Observable<Habit[]> {
-    const data = localStorage.getItem(this.STORAGE_KEY);
-    const habits = data ? JSON.parse(data) : [];
-    return of(habits.filter((h: Habit) => !h.isDeleted));
+  private refresh(): void {
+    const habits = this.getRawHabits().filter((h: Habit) => !h.isDeleted);
+    this.habitsSubject.next(habits);
   }
 
   addHabit(habit: Habit): Observable<Habit> {
@@ -35,18 +37,45 @@ export class HabitService {
     };
     habits.push(newHabit);
     this.saveRawHabits(habits);
+    this.refresh();
     return of(newHabit);
   }
 
   updateHabit(updatedHabit: Habit): Observable<Habit> {
     const habits = this.getRawHabits();
-    updatedHabit.modifiedAt = new Date();
     const index = habits.findIndex(h => h.id === updatedHabit.id);
     if (index !== -1) {
-      habits[index] = { ...updatedHabit };
+      habits[index] = { ...updatedHabit, modifiedAt: new Date() };
       this.saveRawHabits(habits);
+      this.refresh();
     }
     return of(updatedHabit);
+  }
+
+  toggleHabitDay(habitId: number, dayIndex: number): Observable<Habit | null> {
+    const habits = this.getRawHabits();
+    const index = habits.findIndex(h => h.id === habitId);
+
+    if (index !== -1) {
+      const habit = habits[index];
+      habit.completedDays[dayIndex] = !habit.completedDays[dayIndex];
+      habit.streak = this.calculateStreak(habit.completedDays);
+      habit.modifiedAt = new Date();
+
+      this.saveRawHabits(habits);
+      this.refresh();
+      return of(habit);
+    }
+    return of(null);
+  }
+
+  private calculateStreak(completedDays: boolean[]): number {
+    let streak = 0;
+    for (let i = completedDays.length - 1; i >= 0; i--) {
+      if (completedDays[i]) streak++;
+      else break;
+    }
+    return streak;
   }
 
   deleteHabit(id: number): Observable<boolean> {
@@ -54,8 +83,8 @@ export class HabitService {
     const index = habits.findIndex(h => h.id === id);
     if (index !== -1) {
       habits[index].isDeleted = true;
-      habits[index].modifiedAt = new Date();
       this.saveRawHabits(habits);
+      this.refresh();
       return of(true);
     }
     return of(false);
