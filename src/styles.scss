@@ -24,3 +24,81 @@ body {
   color: global.$text-main;
   font-family: 'Segoe UI', Roboto, sans-serif;
 }
+
+.mat-mdc-snack-bar-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 24px !important;
+}
+
+.mdc-snackbar__surface {
+  border-radius: 8px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+  min-width: 320px !important;
+  max-width: 500px !important;
+  text-align: center;
+}
+
+.snackbar-success {
+  .mdc-snackbar__surface {
+    background-color: #2e7d32 !important;
+  }
+  .mdc-snackbar__label {
+    color: #ffffff !important;
+    font-weight: 500;
+  }
+  .mat-mdc-snack-bar-action button {
+    color: #a3e2a7 !important;
+  }
+}
+
+.snackbar-error {
+  .mdc-snackbar__surface {
+    background-color: #c62828 !important;
+  }
+  .mdc-snackbar__label {
+    color: #ffffff !important;
+    font-weight: 500;
+  }
+  .mat-mdc-snack-bar-action button {
+    color: #ffcdd2 !important;
+  }
+}
+
+.theme-input {
+  background-color: global.$surface-low;
+  border: 1px solid global.$outline;
+  color: global.$text-main;
+  border-radius: 8px;
+  padding: 0.6rem 1rem;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+
+  &:focus {
+    background-color: global.$surface-high;
+    border-color: global.$primary-color;
+    box-shadow: 0 0 0 3px rgba(var(--mat-sys-primary-rgb), 0.15);
+    color: global.$text-main;
+  }
+}
+
+.btn-habit-primary {
+  background-color: global.$primary-color;
+  color: global.$on-primary;
+  font-weight: 600;
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  border: none;
+  transition: filter 0.2s;
+
+  &:hover:not(:disabled) {
+    filter: brightness(0.9);
+    color: global.$on-primary;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}

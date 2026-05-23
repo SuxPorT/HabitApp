@@ -17,7 +17,7 @@ export class HabitService {
 
   private refresh(): void {
     this.http.get<Habit[]>(this.apiUrl).subscribe({
-      next: (habits) => this.habitsSubject.next(habits)
+      next: (habits: Habit[]) => this.habitsSubject.next(habits)
     });
   }
 
