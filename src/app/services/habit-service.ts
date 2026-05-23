@@ -1,96 +1,63 @@
 import { Injectable } from '@angular/core';
-import { Observable, BehaviorSubject, of } from 'rxjs';
+import { Observable, BehaviorSubject } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { tap } from 'rxjs/operators';
+import { environment } from '../../environments/environment';
 import { Habit } from '../../models/habit.model';
 
 @Injectable({ providedIn: 'root' })
 export class HabitService {
-  private readonly STORAGE_KEY = 'habitapp_data';
+  private readonly apiUrl = `${environment.apiUrl}/habit`;
   private habitsSubject = new BehaviorSubject<Habit[]>([]);
   habits$ = this.habitsSubject.asObservable();
 
-  constructor() {
-    this.initStorage();
+  constructor(private http: HttpClient) {
     this.refresh();
-  }
-
-  private initStorage(): void {
-    if (!localStorage.getItem(this.STORAGE_KEY)) {
-      localStorage.setItem(this.STORAGE_KEY, JSON.stringify([]));
-    }
   }
 
   private refresh(): void {
-    const habits = this.getRawHabits().filter((h: Habit) => !h.isDeleted);
-    this.habitsSubject.next(habits);
-  }
-
-  private getRawHabits(): Habit[] {
-    const data = localStorage.getItem(this.STORAGE_KEY);
-    return data ? JSON.parse(data) : [];
-  }
-
-  private saveRawHabits(habits: Habit[]): void {
-    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(habits));
+    this.http.get<Habit[]>(this.apiUrl).subscribe({
+      next: (habits) => this.habitsSubject.next(habits)
+    });
   }
 
   addHabit(habit: Habit): Observable<Habit> {
-    const habits = this.getRawHabits();
-    const newHabit: Habit = {
-      ...habit,
-      id: habits.length > 0 ? Math.max(...habits.map(h => h.id)) + 1 : 1,
-      streak: this.calculateStreak(habit.completedDays),
-      createdAt: new Date(),
-      isDeleted: false
-    };
-    habits.push(newHabit);
-    this.saveRawHabits(habits);
-    this.refresh();
-    return of(newHabit);
+    return this.http.post<Habit>(this.apiUrl, habit).pipe(
+      tap(() => this.refresh())
+    );
   }
 
   updateHabit(updatedHabit: Habit): Observable<Habit> {
-    const habits = this.getRawHabits();
-    const index = habits.findIndex(h => h.id === updatedHabit.id);
-    if (index !== -1) {
-      updatedHabit.streak = this.calculateStreak(updatedHabit.completedDays);
-      habits[index] = { ...updatedHabit, modifiedAt: new Date() };
-      this.saveRawHabits(habits);
-      this.refresh();
-    }
-    return of(updatedHabit);
+    return this.http.put<Habit>(`${this.apiUrl}/${updatedHabit.id}`, updatedHabit).pipe(
+      tap(() => this.refresh())
+    );
   }
 
   toggleHabitDay(habitId: number, dayIndex: number): Observable<Habit | null> {
-    const habits = this.getRawHabits();
-    const index = habits.findIndex(h => h.id === habitId);
-    if (index !== -1) {
-      const habit = habits[index];
-      habit.completedDays[dayIndex] = !habit.completedDays[dayIndex];
+    const habits = this.habitsSubject.getValue();
+    const habit = habits.find(h => h.id === habitId);
+    if (!habit) return new BehaviorSubject<null>(null).asObservable();
 
-      if (!habit.completedDays[dayIndex]) {
-        for (let i = dayIndex + 1; i < habit.completedDays.length; i++) {
-          habit.completedDays[i] = false;
-        }
+    const updatedHabit = { ...habit, completedDays: [...habit.completedDays] };
+    updatedHabit.completedDays[dayIndex] = !updatedHabit.completedDays[dayIndex];
+
+    if (!updatedHabit.completedDays[dayIndex]) {
+      for (let i = dayIndex + 1; i < updatedHabit.completedDays.length; i++) {
+        updatedHabit.completedDays[i] = false;
       }
-
-      habit.streak = this.calculateStreak(habit.completedDays);
-      this.saveRawHabits(habits);
-      this.refresh();
-      return of(habit);
     }
-    return of(null);
+
+    updatedHabit.streak = this.calculateStreak(updatedHabit.completedDays);
+
+    return this.http.put<Habit>(`${this.apiUrl}/${habitId}`, updatedHabit).pipe(
+      tap(() => this.refresh())
+    );
   }
 
   deleteHabit(id: number): Observable<boolean> {
-    const habits = this.getRawHabits();
-    const index = habits.findIndex(h => h.id === id);
-    if (index !== -1) {
-      habits[index].isDeleted = true;
-      this.saveRawHabits(habits);
-      this.refresh();
-      return of(true);
-    }
-    return of(false);
+    return this.http.delete<boolean>(`${this.apiUrl}/${id}`).pipe(
+      tap(() => this.refresh())
+    );
   }
 
   private calculateStreak(completedDays: boolean[]): number {
