@@ -6,6 +6,7 @@ import { map, startWith } from 'rxjs/operators';
 import { Habit } from '../../../../models/habit.model';
 import { HabitDialog } from '../../views/habit-dialog/habit-dialog';
 import { HabitService } from '../../../services/habit-service';
+import { LoadingService } from '../../../services/loading-service';
 
 @Component({
   selector: 'app-body',
@@ -17,14 +18,17 @@ export class Body implements OnInit {
   weekDays: string[] = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
   currentDayIndex: number = new Date().getDay();
   filteredHabits$!: Observable<Habit[]>;
+  loading$!: Observable<boolean>;
   filterControl = new FormControl('', { nonNullable: true });
 
   constructor(
     private habitService: HabitService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private loadingService: LoadingService
   ) { }
 
   ngOnInit(): void {
+    this.loading$ = this.loadingService.loading$;
     this.filteredHabits$ = combineLatest([
       this.habitService.habits$,
       this.filterControl.valueChanges.pipe(startWith(''))

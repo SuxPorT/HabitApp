@@ -2,15 +2,18 @@ import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest, HttpResponse, Htt
 import { Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Observable, throwError } from 'rxjs';
-import { catchError, tap } from 'rxjs/operators';
+import { catchError, finalize, tap } from 'rxjs/operators';
+import { LoadingService } from '../services/loading-service';
 
 @Injectable()
 export class NotificationInterceptor implements HttpInterceptor {
   constructor(
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private loadingService: LoadingService
   ) { }
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+    this.loadingService.show();
 
     return next.handle(req).pipe(
       tap((event: HttpEvent<any>) => {
@@ -21,6 +24,9 @@ export class NotificationInterceptor implements HttpInterceptor {
       catchError((error: HttpErrorResponse) => {
         this.handleError(error);
         return throwError(() => error);
+      }),
+      finalize(() => {
+        this.loadingService.hide();
       })
     );
   }

@@ -1,4 +1,12 @@
-<div class="container body-wrapper">
+<div class="container body-wrapper position-relative">
+  @if (loading$ | async) {
+    <div class="loading-overlay d-flex justify-content-center align-items-center rounded">
+      <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem">
+        <span class="visually-hidden">Carregando...</span>
+      </div>
+    </div>
+  }
+
   <section class="row week-summary rounded shadow-sm mb-4 mx-0">
     @for (day of weekDays; track day; let i = $index) {
       <div class="col text-center">

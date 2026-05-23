@@ -15,7 +15,13 @@ import { NotificationInterceptor } from './interceptors/notification-interceptor
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 @NgModule({
-  declarations: [App, Header, Body, Footer, HabitDialog],
+  declarations: [
+    App,
+    Header,
+    Body,
+    Footer,
+    HabitDialog
+  ],
   imports: [
     BrowserModule,
     AppRoutingModule,
