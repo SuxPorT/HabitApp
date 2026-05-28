@@ -4,37 +4,19 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { tap } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { Habit } from '../models/habit.model';
+import { BaseService } from './base-service';
 
 @Injectable({ providedIn: 'root' })
-export class HabitService {
-  private readonly apiUrl = `${environment.apiUrl}/habit`;
-  private habitsSubject = new BehaviorSubject<Habit[]>([]);
-  habits$ = this.habitsSubject.asObservable();
+export class HabitService extends BaseService<Habit> {
 
-  constructor(private http: HttpClient) {
-    this.refresh();
+  public habits$ = this.data$;
+
+  constructor(http: HttpClient) {
+    super(http, `${environment.apiUrl}/habit`);
   }
 
-  private refresh(): void {
-    this.http.get<Habit[]>(this.apiUrl).subscribe({
-      next: (habits: Habit[]) => this.habitsSubject.next(habits)
-    });
-  }
-
-  addHabit(habit: Habit): Observable<Habit> {
-    return this.http.post<Habit>(this.apiUrl, habit).pipe(
-      tap(() => this.refresh())
-    );
-  }
-
-  updateHabit(updatedHabit: Habit): Observable<Habit> {
-    return this.http.put<Habit>(`${this.apiUrl}/${updatedHabit.id}`, updatedHabit).pipe(
-      tap(() => this.refresh())
-    );
-  }
-
-  toggleHabitDay(habitId: number, dayIndex: number): Observable<Habit | null> {
-    const habits = this.habitsSubject.getValue();
+  public toggleHabitDay(habitId: number, dayIndex: number): Observable<Habit | null> {
+    const habits = this.getAll();
     const habit = habits.find(h => h.id === habitId);
     if (!habit) return new BehaviorSubject<null>(null).asObservable();
 
@@ -56,18 +38,15 @@ export class HabitService {
     );
   }
 
-  deleteHabit(id: number): Observable<boolean> {
-    return this.http.delete<boolean>(`${this.apiUrl}/${id}`).pipe(
-      tap(() => this.refresh())
-    );
-  }
-
   private calculateStreak(completedDays: boolean[]): number {
-    let streak = 0;
-    for (let done of completedDays) {
-      if (done) streak++;
-      else break;
+    let currentStreak = 0;
+    for (let i = completedDays.length - 1; i >= 0; i--) {
+      if (completedDays[i]) {
+        currentStreak++;
+      } else if (currentStreak > 0) {
+        break;
+      }
     }
-    return streak;
+    return currentStreak;
   }
 }

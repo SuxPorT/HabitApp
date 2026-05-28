@@ -54,18 +54,18 @@ export class Habits implements OnInit {
     });
   }
 
-  handleSave(habitData: any): void {
-    if (habitData.id) {
-      this.habitService.updateHabit(habitData).subscribe();
+  handleSave(habit: Habit): void {
+    if (habit.id) {
+      this.habitService.update(habit).subscribe();
     } else {
       this.userService.getUser().pipe(take(1)).subscribe({
         next: (user) => {
           if (user && user.id) {
             const payload = {
-              ...habitData,
+              ...habit,
               userId: user.id
             };
-            this.habitService.addHabit(payload).subscribe();
+            this.habitService.add(payload).subscribe();
           } else {
             console.error('Não foi possível criar o hábito: usuário não identificado.');
           }
@@ -80,7 +80,7 @@ export class Habits implements OnInit {
 
   deleteHabit(id: number): void {
     if (confirm('Excluir hábito?')) {
-      this.habitService.deleteHabit(id).subscribe();
+      this.habitService.delete(id).subscribe();
     }
   }
 }

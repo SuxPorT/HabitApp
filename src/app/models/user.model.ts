@@ -1,8 +1,6 @@
-export interface User {
-  id: number;
+import { Base } from "./base-model";
+
+export interface User extends Base {
   name: string;
   email: string;
-  createdAt: Date;
-  modifiedAt?: Date;
-  isDeleted: boolean;
 }

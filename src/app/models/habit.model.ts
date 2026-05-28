@@ -1,11 +1,9 @@
-export interface Habit {
-  id: number;
+import { Base } from "./base-model";
+
+export interface Habit extends Base {
   title: string;
   icon: string;
   streak: number;
   completedDays: boolean[];
   userId: number;
-  createdAt: Date;
-  modifiedAt?: Date;
-  isDeleted: boolean;
 }
