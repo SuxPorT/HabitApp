@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { UserService } from '../../../services/user-service';
 import { UserResponse } from '../../../models/user-responde.model';
 import { UserDialog } from '../../views/dialogs/user-dialog/user-dialog';
+import { ConfirmDialog } from '../../views/dialogs/confirm-dialog/confirm-dialog';
 
 @Component({
   selector: 'app-header',
@@ -34,9 +35,21 @@ export class Header implements OnInit {
   }
 
   logout(): void {
-    if (confirm('Deseja realmente sair do aplicativo?')) {
-      this.userService.logout();
-      this.router.navigate(['/login']);
-    }
+    const dialogRef = this.dialog.open(ConfirmDialog, {
+      width: '400px',
+      panelClass: 'custom-dialog-container',
+      data: {
+        title: '🚪 Sair do Aplicativo',
+        message: 'Deseja realmente sair da sua conta?',
+        confirmBtnText: 'Sair'
+      }
+    });
+
+    dialogRef.afterClosed().subscribe((confirmed: boolean) => {
+      if (confirmed) {
+        this.userService.logout();
+        this.router.navigate(['/login']);
+      }
+    });
   }
 }

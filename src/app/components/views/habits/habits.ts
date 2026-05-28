@@ -82,8 +82,12 @@ export class Habits implements OnInit {
   deleteHabit(habit: Habit): void {
     const dialogRef = this.dialog.open(ConfirmDialog, {
       width: '400px',
-      data: { title: habit.title },
-      panelClass: 'custom-dialog-container'
+      panelClass: 'custom-dialog-container',
+      data: {
+        title: '🗑️ Excluir Hábito',
+        message: `Tem certeza que deseja excluir o hábito <strong>"${habit.title}"</strong>?<br />Esta ação não poderá ser desfeita.`,
+        confirmBtnText: 'Excluir'
+      }
     });
 
     dialogRef.afterClosed().subscribe((confirmed: boolean) => {

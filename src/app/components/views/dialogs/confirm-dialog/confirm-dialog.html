@@ -1,13 +1,14 @@
-<h2 mat-dialog-title class="dialog-title fw-bold border-0 text-danger">🗑️ Excluir Hábito</h2>
+<h2 mat-dialog-title class="dialog-title fw-bold border-0 text-danger">
+  {{ data.title }}
+</h2>
 
 <mat-dialog-content class="dialog-content">
-  <p class="mb-0 text-main">
-    Tem certeza que deseja excluir o hábito <strong>"{{ data.title }}"</strong>? <br />Esta ação não
-    poderá ser desfeita.
-  </p>
+  <p class="mb-0 text-main" [innerHTML]="data.message"></p>
 </mat-dialog-content>
 
 <mat-dialog-actions align="end" class="dialog-actions border-0 gap-2">
   <button type="button" class="btn btn-cancel" (click)="onCancel()">Cancelar</button>
-  <button type="button" class="btn btn-danger-action" (click)="onConfirm()">Excluir</button>
+  <button type="button" class="btn btn-danger-action" (click)="onConfirm()">
+    {{ data.confirmBtnText || 'Confirmar' }}
+  </button>
 </mat-dialog-actions>
