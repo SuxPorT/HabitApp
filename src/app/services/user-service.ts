@@ -34,6 +34,26 @@ export class UserService extends BaseService<User> {
     return this.currentUserSubject.value;
   }
 
+  public override update(item: User): Observable<User> {
+    return super.update(item).pipe(
+      tap((updatedUser: User) => {
+        const currentUser = this.getUserValue();
+
+        if (currentUser && currentUser.id === updatedUser.id) {
+          const updatedResponse: UserResponse = {
+            id: updatedUser.id,
+            name: updatedUser.name,
+            email: updatedUser.email
+          };
+
+          localStorage.setItem('habitapp_user', JSON.stringify(updatedResponse));
+
+          this.currentUserSubject.next(updatedResponse);
+        }
+      })
+    );
+  }
+
   public login(userRequest: UserRequest): Observable<UserResponse> {
     return this.http.post<UserResponse>(`${this.apiUrl}/login`, userRequest).pipe(
       tap((user: UserResponse) => {

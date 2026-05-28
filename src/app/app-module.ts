@@ -13,12 +13,14 @@ import { CommonModule } from '@angular/common';
 import { provideHttpClient, withInterceptorsFromDi, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { NotificationInterceptor } from './interceptors/notification-interceptor';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatMenuModule } from '@angular/material/menu';
 import { Login } from './components/views/login/login';
 import { Habits } from './components/views/habits/habits';
 import { ConfirmDialog } from './components/views/dialogs/confirm-dialog/confirm-dialog';
+import { UserDialog } from './components/views/dialogs/user-dialog/user-dialog';
 
 @NgModule({
-  declarations: [App, Header, Body, Footer, HabitDialog, Login, Habits, ConfirmDialog],
+  declarations: [App, Header, Body, Footer, HabitDialog, Login, Habits, ConfirmDialog, UserDialog],
   imports: [
     BrowserModule,
     AppRoutingModule,
@@ -27,6 +29,7 @@ import { ConfirmDialog } from './components/views/dialogs/confirm-dialog/confirm
     ReactiveFormsModule,
     MatDialogModule,
     MatSnackBarModule,
+    MatMenuModule
   ],
   providers: [
     provideBrowserGlobalErrorListeners(),

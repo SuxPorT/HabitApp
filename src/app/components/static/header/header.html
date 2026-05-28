@@ -1,14 +1,27 @@
-@if (isLoggedIn$ | async) {
+@if (isLoggedIn$ | async; as user) {
   <header class="navbar header-container sticky-top border-bottom">
     <div class="container header-inner d-flex justify-content-between align-items-center">
       <div class="d-flex align-items-center gap-2">
         <span class="header-logo">✨</span>
         <h1 class="header-title mb-0 fw-bold">Meus Hábitos</h1>
       </div>
-      <button (click)="logout()" class="btn btn-logout d-flex align-items-center gap-2">
-        <span>Sair</span>
-        <i class="logout-icon"></i>
-      </button>
+
+      <div class="d-flex align-items-center gap-2 profile-container">
+        <span class="user-name small fw-semibold text-main">{{ user.name }}</span>
+        <span class="text-muted small">|</span>
+
+        <button type="button" class="btn-avatar" [matMenuTriggerFor]="profileMenu">👤</button>
+
+        <mat-menu
+          #profileMenu="matMenu"
+          xPosition="before"
+          yPosition="below"
+          class="custom-profile-menu"
+        >
+          <button mat-menu-item (click)="openEditUserDialog(user)">✏️ Atualizar Dados</button>
+          <button mat-menu-item class="text-danger" (click)="logout()">🚪 Sair</button>
+        </mat-menu>
+      </div>
     </div>
   </header>
 }

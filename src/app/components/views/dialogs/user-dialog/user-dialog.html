@@ -1,0 +1,68 @@
+<h2 mat-dialog-title class="dialog-title fw-bold border-0">
+  👤 Meus Dados
+</h2>
+
+<mat-dialog-content class="dialog-content">
+  <form #userForm="ngForm">
+    
+    <div class="mb-3">
+      <label class="form-label dialog-label">Nome Completo</label>
+      <input
+        type="text"
+        class="form-control theme-input"
+        [(ngModel)]="formData.name"
+        name="name"
+        #name="ngModel"
+        required
+        placeholder="Seu nome"
+      />
+      <div *ngIf="name.invalid && (name.dirty || name.touched)" class="error-text">
+        O nome é obrigatório.
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label dialog-label">E-mail</label>
+      <input
+        type="email"
+        class="form-control theme-input"
+        [(ngModel)]="formData.email"
+        name="email"
+        #email="ngModel"
+        required
+        email
+        placeholder="seuemail@exemplo.com"
+      />
+      <div *ngIf="email.invalid && (email.dirty || email.touched)" class="error-text">
+        Informe um e-mail válido.
+      </div>
+    </div>
+
+    <div class="mb-2">
+      <label class="form-label dialog-label">Nova Senha (Opcional)</label>
+      <input
+        type="password"
+        class="form-control theme-input"
+        [(ngModel)]="formData.password"
+        name="password"
+        placeholder="Deixe em branco para não alterar"
+      />
+      <small class="text-muted d-block mt-1" style="font-size: 0.7rem;">
+        Se preenchido, a nova senha passará pelo processo de Hash de segurança.
+      </small>
+    </div>
+
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" class="dialog-actions border-0 gap-2">
+  <button type="button" class="btn btn-cancel" (click)="onClose()">Cancelar</button>
+  <button
+    type="button"
+    class="btn btn-habit-primary"
+    [disabled]="userForm.invalid"
+    (click)="onSave()"
+  >
+    Salvar Alterações
+  </button>
+</mat-dialog-actions>
