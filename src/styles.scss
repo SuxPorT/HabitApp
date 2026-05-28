@@ -76,29 +76,81 @@ body {
     box-shadow 0.2s;
 
   &:focus {
-    background-color: global.$surface-high;
-    border-color: global.$primary-color;
-    box-shadow: 0 0 0 3px rgba(var(--mat-sys-primary-rgb), 0.15);
+    background-color: global.$surface-low;
     color: global.$text-main;
+    border-color: global.$primary-color;
+    box-shadow: 0 0 0 0.25rem rgba(global.$primary-color, 0.1);
+    outline: none;
   }
 }
 
-.btn-habit-primary {
-  background-color: global.$primary-color;
-  color: global.$on-primary;
-  font-weight: 600;
-  padding: 0.6rem 1.2rem;
-  border-radius: 8px;
-  border: none;
-  transition: filter 0.2s;
+.custom-dialog-container {
+  .mat-mdc-dialog-container {
+    --mdc-dialog-container-shape: 16px;
+    --mdc-dialog-container-color: #{global.$surface-low};
+  }
+}
+
+.status-dot {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 2px solid global.$outline;
+  background-color: transparent;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease-in-out;
+  position: relative;
 
   &:hover:not(:disabled) {
-    filter: brightness(0.9);
-    color: global.$on-primary;
+    background-color: rgba(global.$primary-color, 0.1);
+    border-color: global.$primary-color;
+    transform: scale(1.08);
+  }
+
+  &:focus-visible {
+    outline: 2px solid global.$primary-color;
+    outline-offset: 2px;
   }
 
   &:disabled {
-    opacity: 0.6;
     cursor: not-allowed;
+    opacity: 0.35;
+    border-style: dashed;
+    background-color: global.$surface-low;
+    transform: none;
+  }
+
+  &.completed {
+    background-color: global.$primary-color;
+    border-color: global.$primary-color;
+    color: global.$on-primary;
+
+    &::after {
+      content: '✓';
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: white;
+      display: block;
+      line-height: 1;
+      animation: popIn 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    &:hover:not(:disabled) {
+      filter: brightness(0.9);
+    }
+  }
+}
+
+@keyframes popIn {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
   }
 }

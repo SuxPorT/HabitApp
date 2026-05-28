@@ -13,7 +13,11 @@ export class NotificationInterceptor implements HttpInterceptor {
   ) { }
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    this.loadingService.show();
+    const skipLoading = req.headers.has('X-Skip-Loading');
+
+    if (!skipLoading) {
+      this.loadingService.show();
+    }
 
     return next.handle(req).pipe(
       tap((event: HttpEvent<any>) => {

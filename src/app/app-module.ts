@@ -13,15 +13,11 @@ import { CommonModule } from '@angular/common';
 import { provideHttpClient, withInterceptorsFromDi, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { NotificationInterceptor } from './interceptors/notification-interceptor';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { Login } from './components/views/login/login';
+import { Habits } from './components/views/habits/habits';
 
 @NgModule({
-  declarations: [
-    App,
-    Header,
-    Body,
-    Footer,
-    HabitDialog
-  ],
+  declarations: [App, Header, Body, Footer, HabitDialog, Login, Habits],
   imports: [
     BrowserModule,
     AppRoutingModule,
@@ -29,7 +25,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
     FormsModule,
     ReactiveFormsModule,
     MatDialogModule,
-    MatSnackBarModule
+    MatSnackBarModule,
   ],
   providers: [
     provideBrowserGlobalErrorListeners(),
@@ -37,9 +33,9 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
     {
       provide: HTTP_INTERCEPTORS,
       useClass: NotificationInterceptor,
-      multi: true
-    }
+      multi: true,
+    },
   ],
   bootstrap: [App],
 })
-export class AppModule { }
+export class AppModule {}

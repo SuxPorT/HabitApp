@@ -1,0 +1,72 @@
+@use 'variables' as global;
+
+.login-container {
+  min-height: calc(100vh - 80px);
+  background-color: global.$bg-color;
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 400px;
+  background-color: global.$surface-low;
+  border: 1px solid global.$outline;
+  border-radius: 16px;
+  margin-bottom: 20px;
+}
+
+h2 {
+  color: global.$text-main;
+}
+
+.tab-btn {
+  color: global.$text-muted;
+  transition: all 0.3s ease;
+  border-bottom: 2px solid transparent !important;
+  font-size: 0.95rem;
+  cursor: pointer;
+
+  &:hover {
+    color: global.$text-main;
+  }
+
+  &.active {
+    color: global.$primary-color;
+    border-bottom: 2px solid global.$primary-color !important;
+  }
+}
+
+.btn-habit-primary {
+  background-color: global.$primary-color !important;
+  border-color: global.$primary-color !important;
+  border-radius: 8px;
+  color: #ffffff !important;
+  transition: opacity 0.2s ease;
+
+  &:hover:not(:disabled) {
+    opacity: 0.9;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.fade-in-animated {
+  animation: fadeIn 0.4s ease-in-out forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

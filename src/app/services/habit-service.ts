@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Observable, BehaviorSubject } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { tap } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
-import { Habit } from '../../models/habit.model';
+import { Habit } from '../models/habit.model';
 
 @Injectable({ providedIn: 'root' })
 export class HabitService {
@@ -49,7 +49,9 @@ export class HabitService {
 
     updatedHabit.streak = this.calculateStreak(updatedHabit.completedDays);
 
-    return this.http.put<Habit>(`${this.apiUrl}/${habitId}`, updatedHabit).pipe(
+    const headers = new HttpHeaders({ 'X-Skip-Loading': 'true' });
+
+    return this.http.put<Habit>(`${this.apiUrl}/${habitId}`, updatedHabit, { headers }).pipe(
       tap(() => this.refresh())
     );
   }
