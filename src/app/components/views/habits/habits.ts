@@ -32,12 +32,15 @@ export class Habits implements OnInit {
 
   ngOnInit(): void {
     this.loading$ = this.loadingService.loading$;
+
+    this.triggerRefresh();
+
     this.filteredHabits$ = combineLatest([
       this.habitService.habits$,
       this.filterControl.valueChanges.pipe(startWith(''))
     ]).pipe(
-      map(([habits, filterString]) => {
-        const search = filterString.toLowerCase().trim();
+      map(([habits, filterValue]) => {
+        const search = filterValue.toLowerCase().trim();
         return search ? habits.filter(h => h.title.toLowerCase().includes(search)) : habits;
       })
     );
@@ -57,16 +60,17 @@ export class Habits implements OnInit {
 
   handleSave(habit: Habit): void {
     if (habit.id) {
-      this.habitService.update(habit).subscribe();
+      this.habitService.update(habit).subscribe({
+        next: () => this.triggerRefresh()
+      });
     } else {
       this.userService.getUser().pipe(take(1)).subscribe({
         next: (user) => {
           if (user && user.id) {
-            const payload = {
-              ...habit,
-              userId: user.id
-            };
-            this.habitService.add(payload).subscribe();
+            const payload = { ...habit, userId: user.id };
+            this.habitService.add(payload).subscribe({
+              next: () => this.triggerRefresh()
+            });
           } else {
             console.error('Não foi possível criar o hábito: usuário não identificado.');
           }
@@ -92,7 +96,17 @@ export class Habits implements OnInit {
 
     dialogRef.afterClosed().subscribe((confirmed: boolean) => {
       if (confirmed) {
-        this.habitService.delete(habit.id).subscribe();
+        this.habitService.delete(habit.id).subscribe({
+          next: () => this.triggerRefresh()
+        });
+      }
+    });
+  }
+
+  private triggerRefresh(): void {
+    this.userService.getUser().pipe(take(1)).subscribe((user) => {
+      if (user && user.id) {
+        this.habitService.refreshByUserId(user.id);
       }
     });
   }

@@ -17,7 +17,7 @@ export abstract class BaseService<T extends Base> {
   public refresh(): void {
     this.http.get<T[]>(this.apiUrl).subscribe({
       next: (items: T[]) => this.dataSubject.next(items),
-      error: (err) => console.error(`Erro ao carregar dados de ${this.apiUrl}:`, err)
+      error: (err) => console.error(`Erro ao carregar dados de ${this.apiUrl}: `, err)
     });
   }
 

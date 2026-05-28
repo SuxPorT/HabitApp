@@ -15,6 +15,15 @@ export class HabitService extends BaseService<Habit> {
     super(http, `${environment.apiUrl}/habit`);
   }
 
+  public override refresh(): void { }
+
+  public refreshByUserId(userId: number): void {
+    this.http.get<Habit[]>(`${this.apiUrl}/user/${userId}`).subscribe({
+      next: (items: Habit[]) => this.dataSubject.next(items),
+      error: (err) => console.error(`Erro ao carregar hábitos do usuário ${userId}: `, err)
+    });
+  }
+
   public toggleHabitDay(habitId: number, dayIndex: number): Observable<Habit | null> {
     const habits = this.getAll();
     const habit = habits.find(h => h.id === habitId);
@@ -30,11 +39,42 @@ export class HabitService extends BaseService<Habit> {
     }
 
     updatedHabit.streak = this.calculateStreak(updatedHabit.completedDays);
-
     const headers = new HttpHeaders({ 'X-Skip-Loading': 'true' });
 
     return this.http.put<Habit>(`${this.apiUrl}/${habitId}`, updatedHabit, { headers }).pipe(
-      tap(() => this.refresh())
+      tap((updated: Habit) => {
+        const currentHabits = this.getAll().map(h => h.id === updated.id ? updated : h);
+        this.dataSubject.next(currentHabits);
+      })
+    );
+  }
+
+  public override add(item: Partial<Habit>): Observable<Habit> {
+    return this.http.post<Habit>(this.apiUrl, item).pipe(
+      tap((newHabit: Habit) => {
+        const currentHabits = this.getAll();
+        this.dataSubject.next([...currentHabits, newHabit]);
+      })
+    );
+  }
+
+  public override update(item: Habit): Observable<Habit> {
+    return this.http.put<Habit>(`${this.apiUrl}/${item.id}`, item).pipe(
+      tap((updatedHabit: Habit) => {
+        const currentHabits = this.getAll().map(h => h.id === updatedHabit.id ? updatedHabit : h);
+        this.dataSubject.next(currentHabits);
+      })
+    );
+  }
+
+  public override delete(id: number): Observable<boolean> {
+    return this.http.delete<boolean>(`${this.apiUrl}/${id}`).pipe(
+      tap((success: boolean) => {
+        if (success) {
+          const currentHabits = this.getAll().filter(h => h.id !== id);
+          this.dataSubject.next(currentHabits);
+        }
+      })
     );
   }
 

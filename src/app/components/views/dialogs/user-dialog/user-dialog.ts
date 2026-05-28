@@ -39,7 +39,13 @@ export class UserDialog implements OnInit {
 
   onSave(): void {
     if (this.formData.name && this.formData.email) {
-      this.userService.update(this.formData).subscribe({
+      const payload = { ...this.formData };
+
+      if (!payload.password || payload.password.trim() === '') {
+        payload.password = '';
+      }
+
+      this.userService.update(payload).subscribe({
         next: () => {
           this.dialogRef.close();
         },
