@@ -1,0 +1,39 @@
+@use 'variables' as global;
+
+.dialog-title {
+  color: #ff5252;
+  padding-top: 1rem;
+}
+
+.text-main {
+  color: global.$text-main;
+}
+
+.btn-cancel {
+  background-color: transparent;
+  color: global.$text-muted;
+  border: 1px solid global.$outline;
+  border-radius: 12px;
+  padding: 0.6rem 1.2rem;
+  font-weight: 600;
+  transition: all 0.2s;
+
+  &:hover {
+    background-color: global.$outline;
+    color: global.$text-main;
+  }
+}
+
+.btn-danger-action {
+  background-color: #ff5252;
+  color: #ffffff;
+  border: none;
+  border-radius: 12px;
+  padding: 0.6rem 1.2rem;
+  font-weight: 600;
+  transition: all 0.2s;
+
+  &:hover {
+    filter: brightness(0.9);
+  }
+}

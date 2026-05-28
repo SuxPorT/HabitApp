@@ -6,7 +6,7 @@ import { App } from './app';
 import { Header } from './components/static/header/header';
 import { Body } from './components/static/body/body';
 import { Footer } from './components/static/footer/footer';
-import { HabitDialog } from './components/views/habit-dialog/habit-dialog';
+import { HabitDialog } from './components/views/dialogs/habit-dialog/habit-dialog';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
 import { CommonModule } from '@angular/common';
@@ -15,9 +15,10 @@ import { NotificationInterceptor } from './interceptors/notification-interceptor
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { Login } from './components/views/login/login';
 import { Habits } from './components/views/habits/habits';
+import { ConfirmDialog } from './components/views/dialogs/confirm-dialog/confirm-dialog';
 
 @NgModule({
-  declarations: [App, Header, Body, Footer, HabitDialog, Login, Habits],
+  declarations: [App, Header, Body, Footer, HabitDialog, Login, Habits, ConfirmDialog],
   imports: [
     BrowserModule,
     AppRoutingModule,
@@ -38,4 +39,4 @@ import { Habits } from './components/views/habits/habits';
   ],
   bootstrap: [App],
 })
-export class AppModule {}
+export class AppModule { }

@@ -4,10 +4,11 @@ import { MatDialog } from '@angular/material/dialog';
 import { Observable, combineLatest } from 'rxjs';
 import { map, startWith, take } from 'rxjs/operators';
 import { Habit } from '../../../models/habit.model';
-import { HabitDialog } from '../habit-dialog/habit-dialog';
+import { HabitDialog } from '../dialogs/habit-dialog/habit-dialog';
 import { HabitService } from '../../../services/habit-service';
 import { LoadingService } from '../../../services/loading-service';
 import { UserService } from '../../../services/user-service';
+import { ConfirmDialog } from '../dialogs/confirm-dialog/confirm-dialog';
 
 @Component({
   selector: 'app-habits',
@@ -78,9 +79,17 @@ export class Habits implements OnInit {
     this.habitService.toggleHabitDay(habitId, dayIndex).subscribe();
   }
 
-  deleteHabit(id: number): void {
-    if (confirm('Excluir hábito?')) {
-      this.habitService.delete(id).subscribe();
-    }
+  deleteHabit(habit: Habit): void {
+    const dialogRef = this.dialog.open(ConfirmDialog, {
+      width: '400px',
+      data: { title: habit.title },
+      panelClass: 'custom-dialog-container'
+    });
+
+    dialogRef.afterClosed().subscribe((confirmed: boolean) => {
+      if (confirmed) {
+        this.habitService.delete(habit.id).subscribe();
+      }
+    });
   }
 }
