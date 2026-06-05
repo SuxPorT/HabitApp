@@ -53,9 +53,13 @@
   display: grid;
   place-items: center;
   border-radius: global.$radius-lg;
-  background-color: global.$primary-color;
-  color: global.$on-primary;
-  box-shadow: global.$shadow-md;
+  overflow: hidden;
+
+  .brand-logo {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
 }
 
 .brand-kicker,

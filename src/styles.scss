@@ -1,6 +1,8 @@
 @use '@angular/material' as mat;
 @use 'variables' as global;
 
+$app-font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', sans-serif;
+
 @mixin light-theme-tokens {
   --app-bg: #fdfbfb;
   --app-surface: #fdfbfb;
@@ -72,7 +74,7 @@ html {
         primary: mat.$red-palette,
         tertiary: mat.$rose-palette,
       ),
-      typography: Roboto,
+      typography: $app-font-family,
       density: 0,
     )
   );
@@ -134,7 +136,7 @@ app-root {
 }
 
 :root {
-  --app-font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', sans-serif;
+  --app-font-family: #{$app-font-family};
   --app-radius-sm: 8px;
   --app-radius-md: 12px;
   --app-radius-lg: 16px;
