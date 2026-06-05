@@ -1,16 +1,35 @@
+@let resolvedTheme = resolvedTheme$ | async;
+
 @if (isLoggedIn$ | async; as user) {
-  <header class="navbar header-container sticky-top border-bottom">
-    <div class="container header-inner d-flex justify-content-between align-items-center">
-      <div class="d-flex align-items-center gap-2">
-        <span class="header-logo">✨</span>
-        <h1 class="header-title mb-0 fw-bold">Meus Hábitos</h1>
+  <header class="header-container sticky-top">
+    <div class="container header-inner">
+      <div class="brand-lockup" aria-label="HabitApp">
+        <span class="brand-mark" aria-hidden="true">
+          <span class="material-icons">check_circle</span>
+        </span>
+        <span class="brand-copy">
+          <span class="brand-kicker">HabitApp</span>
+          <span class="header-title">Habits</span>
+        </span>
       </div>
 
-      <div class="d-flex align-items-center gap-2 profile-container">
-        <span class="user-name small fw-semibold text-main">{{ user.name }}</span>
-        <span class="text-muted small">|</span>
-
-        <button type="button" class="btn-avatar" [matMenuTriggerFor]="profileMenu">👤</button>
+      <div class="header-actions">
+        <div class="profile-container">
+          <span class="user-name">{{ user.name }}</span>
+          <button
+            type="button"
+            class="btn-avatar"
+            [matMenuTriggerFor]="profileMenu"
+            [attr.aria-label]="'Open profile menu for ' + user.name"
+          >
+            <span class="profile-avatar__initial" aria-hidden="true">{{
+              user.name.charAt(0) | uppercase
+            }}</span>
+            <span class="material-icons profile-avatar__chevron" aria-hidden="true"
+              >expand_more</span
+            >
+          </button>
+        </div>
 
         <mat-menu
           #profileMenu="matMenu"
@@ -18,9 +37,26 @@
           yPosition="below"
           class="custom-profile-menu"
         >
-          <button mat-menu-item (click)="openEditUserDialog(user)">✏️ Atualizar Dados</button>
-          <button mat-menu-item class="text-danger" (click)="logout()">🚪 Sair</button>
+          <button mat-menu-item (click)="openEditUserDialog(user)">
+            <span class="material-icons menu-icon" aria-hidden="true">manage_accounts</span>
+            <span>Update Profile</span>
+          </button>
+          <button mat-menu-item class="menu-danger" (click)="logout()">
+            <span class="material-icons menu-icon" aria-hidden="true">logout</span>
+            <span>Sign Out</span>
+          </button>
         </mat-menu>
+        <button
+          type="button"
+          class="theme-toggle"
+          (click)="toggleTheme()"
+          [attr.aria-label]="resolvedTheme === 'dark' ? 'Use light theme' : 'Use dark theme'"
+          [attr.aria-pressed]="resolvedTheme === 'dark'"
+        >
+          <span class="material-icons theme-toggle__icon" aria-hidden="true">
+            {{ resolvedTheme === 'dark' ? 'dark_mode' : 'light_mode' }}
+          </span>
+        </button>
       </div>
     </div>
   </header>

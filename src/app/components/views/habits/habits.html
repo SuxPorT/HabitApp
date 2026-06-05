@@ -1,80 +1,195 @@
-<div class="container body-wrapper position-relative">
+@let view = view$ | async;
+@let user = user$ | async;
+
+<div class="container habit-app-shell position-relative">
   @if (loading$ | async) {
-    <div class="loading-overlay d-flex justify-content-center align-items-center rounded">
-      <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem">
-        <span class="visually-hidden">Carregando...</span>
+    <div class="loading-overlay" aria-live="polite" aria-busy="true">
+      <div class="loading-card">
+        <div class="spinner-border" role="status" aria-hidden="true"></div>
+        <span>Syncing habits...</span>
+        <span class="visually-hidden">Loading...</span>
       </div>
     </div>
   }
 
-  <section class="row week-summary rounded shadow-sm mb-4 mx-0">
-    @for (day of weekDays; track day; let i = $index) {
-      <div class="col text-center">
-        <small class="text-muted d-block mb-1">{{ day }}</small>
-        <div class="day-indicator mx-auto" [class.active]="i === currentDayIndex"></div>
+  @if (view; as habitsView) {
+    <section class="today-hero" aria-labelledby="today-title">
+      <div class="today-hero__copy">
+        <p class="section-kicker">Today</p>
+        <h1 id="today-title">
+          {{ greeting }}, {{ getFirstName(user?.name) }}
+          <span aria-hidden="true">👋</span>
+        </h1>
+        <p>{{ habitsView.motivationalMessage }}</p>
       </div>
-    }
-  </section>
 
-  <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-3 mb-4">
-    <div class="search-container flex-grow-1">
-      <input
-        type="text"
-        class="form-control theme-input search-input"
-        placeholder="🔍 Pesquisar hábitos..."
-        [formControl]="filterControl"
-      />
-    </div>
-    <button
-      (click)="openNewHabitDialog()"
-      class="btn btn-habit-primary shadow-sm white-space-nowrap"
-    >
-      + Novo Hábito
-    </button>
-  </div>
-
-  <main class="row g-3">
-    @for (habit of filteredHabits$ | async; track habit.id) {
-      <div class="col-12">
-        <div class="card habit-card border-0 shadow-sm">
-          <div class="card-body d-flex justify-content-between align-items-center">
-            <div class="d-flex align-items-center">
-              <div class="habit-icon-wrapper me-3">{{ habit.icon }}</div>
-              <div>
-                <small class="text-muted d-block habit-date">
-                  Criado em: {{ habit.createdAt | date: 'dd/MM/yyyy - HH:mm' }}
-                </small>
-                <h3 class="habit-name mb-1 fw-bold">{{ habit.title }}</h3>
-                <p class="small text-muted mb-0">{{ habit.streak }} dias seguidos</p>
-              </div>
-            </div>
-
-            <div class="d-flex align-items-center gap-3">
-              <div class="d-flex gap-2 border-end pe-3">
-                @for (done of habit.completedDays; track $index; let j = $index) {
-                  <button
-                    type="button"
-                    ,
-                    (click)="toggleHabit(habit.id, j)"
-                    class="status-dot"
-                    [class.completed]="done"
-                    [disabled]="j > 0 && !habit.completedDays[j - 1]"
-                  ></button>
-                }
-              </div>
-
-              <div class="action-buttons d-flex gap-1">
-                <button class="btn btn-action edit" (click)="openNewHabitDialog(habit)">✏️</button>
-                <button class="btn btn-action delete" (click)="deleteHabit(habit)">🗑️</button>
-              </div>
-            </div>
-          </div>
+      <div class="daily-progress-card" aria-label="Daily progress summary">
+        <div class="daily-progress-card__header">
+          <span>Daily progress</span>
+          <strong>{{ habitsView.completedToday }}/{{ habitsView.activeHabits }}</strong>
+        </div>
+        <div
+          class="daily-progress"
+          role="progressbar"
+          [attr.aria-valuenow]="habitsView.completionPercent"
+          aria-valuemin="0"
+          aria-valuemax="100"
+          aria-label="Today completion progress"
+        >
+          <span [style.width.%]="habitsView.completionPercent"></span>
+        </div>
+        <div class="daily-progress-card__meta">
+          <span>{{ habitsView.completionPercent }}% complete</span>
+          <span>{{ weekDays[currentDayIndex] }} is today</span>
         </div>
       </div>
-    } @empty {
-      <div class="col-12 text-center py-5">
-        <p class="text-muted">Nenhum hábito encontrado. 🔍</p>
+    </section>
+
+    <section class="habit-toolbar" aria-label="Habit tools">
+      <label class="search-field" for="habit-search">
+        <span class="material-icons search-icon" aria-hidden="true">search</span>
+        <input
+          id="habit-search"
+          data-testid="habit-search-input"
+          type="text"
+          class="form-control theme-input search-input"
+          placeholder="Search habits"
+          [formControl]="filterControl"
+        />
+      </label>
+
+      <button
+        type="button"
+        (click)="openNewHabitDialog()"
+        class="btn btn-habit-primary"
+        aria-label="New habit"
+        title="New habit"
+      >
+        <span class="material-icons" aria-hidden="true">add</span>
+      </button>
+    </section>
+
+    <main class="today-section" aria-label="Today habit completion">
+      <div class="section-heading">
+        <div>
+          <p class="section-kicker">Quick complete</p>
+          <h2>Today's habits</h2>
+        </div>
+        <span class="habit-count">{{ habitsView.activeHabits }} active</span>
       </div>
-    }
-  </main>
+
+      <section class="habits-list" aria-label="Habit list">
+        @for (habit of habitsView.habits; track habit.id) {
+          <article
+            class="habit-card"
+            data-testid="habit-card"
+            role="button"
+            tabindex="0"
+            [class.habit-card--complete]="isHabitCompletedToday(habit)"
+            [attr.aria-pressed]="isHabitCompletedToday(habit)"
+            [attr.aria-label]="
+              (isHabitCompletedToday(habit) ? 'Mark incomplete: ' : 'Complete: ') + habit.title
+            "
+            (click)="toggleToday(habit, $event)"
+            (keydown.enter)="toggleToday(habit, $event)"
+            (keydown.space)="toggleToday(habit, $event)"
+          >
+            <div class="habit-complete-indicator" aria-hidden="true">
+              <span class="material-icons">check</span>
+            </div>
+
+            <div class="habit-card__content">
+              <div class="habit-icon-wrapper" aria-hidden="true">{{ habit.icon }}</div>
+
+              <div class="habit-copy">
+                <h3 class="habit-name">{{ habit.title }}</h3>
+                <p class="habit-streak">
+                  <span class="material-icons" aria-hidden="true">local_fire_department</span>
+                  <span>{{ habit.streak }} day streak</span>
+                </p>
+                <div
+                  class="week-strip"
+                  role="list"
+                  [attr.aria-label]="'Weekly indicators for ' + habit.title"
+                >
+                  @for (done of habit.completedDays; track $index; let dayIndex = $index) {
+                    <span
+                      class="week-indicator"
+                      role="listitem"
+                      [class.done]="done"
+                      [class.today]="dayIndex === currentDayIndex"
+                      [attr.aria-label]="weekDays[dayIndex] + ': ' + (done ? 'completed' : 'open')"
+                    >
+                  <span class="week-indicator__dot" aria-hidden="true"></span>
+                </span>
+                  }
+                </div>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              class="btn habit-menu-trigger"
+              [matMenuTriggerFor]="habitMenu"
+              (click)="$event.stopPropagation()"
+              (keydown.enter)="$event.stopPropagation()"
+              (keydown.space)="$event.stopPropagation()"
+              [attr.aria-label]="'Open actions for ' + habit.title"
+            >
+              <span class="material-icons" aria-hidden="true">more_horiz</span>
+            </button>
+
+            <mat-menu
+              #habitMenu="matMenu"
+              xPosition="before"
+              yPosition="below"
+              class="habit-card-menu"
+            >
+              <button mat-menu-item (click)="openNewHabitDialog(habit, $event)">
+                <span class="material-icons habit-menu-icon" aria-hidden="true">edit</span>
+                <span>Edit</span>
+              </button>
+              <button mat-menu-item class="habit-menu-danger" (click)="deleteHabit(habit, $event)">
+                <span class="material-icons habit-menu-icon" aria-hidden="true">delete</span>
+                <span>Delete</span>
+              </button>
+            </mat-menu>
+          </article>
+        } @empty {
+          <div class="empty-state" data-testid="habits-empty-state">
+            <span class="material-icons empty-state__icon" aria-hidden="true">bolt</span>
+            <h2>No habits yet</h2>
+            <p>Create one habit and make today count.</p>
+            <button type="button" (click)="openNewHabitDialog()" class="btn btn-habit-secondary">
+              <span class="material-icons" aria-hidden="true">add</span>
+              <span>Create habit</span>
+            </button>
+          </div>
+        }
+      </section>
+    </main>
+
+    <section class="stats-section" aria-label="Habit statistics">
+      <article class="stat-card">
+        <span class="stat-card__label">Current streak</span>
+        <strong>{{ habitsView.currentStreak }}</strong>
+        <span>days</span>
+      </article>
+      <article class="stat-card">
+        <span class="stat-card__label">Success rate</span>
+        <strong>{{ habitsView.successRate }}%</strong>
+        <span>this week</span>
+      </article>
+      <article class="stat-card">
+        <span class="stat-card__label">Total completions</span>
+        <strong>{{ habitsView.totalCompletions }}</strong>
+        <span>checks</span>
+      </article>
+      <article class="stat-card">
+        <span class="stat-card__label">Active habits</span>
+        <strong>{{ habitsView.activeHabits }}</strong>
+        <span>tracked</span>
+      </article>
+    </section>
+  }
 </div>

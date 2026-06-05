@@ -1,54 +1,87 @@
-<h2 mat-dialog-title class="dialog-title fw-bold border-0">
-  {{ data?.id ? 'Editar Hábito' : 'Novo Hábito' }}
-</h2>
-
-<mat-dialog-content class="dialog-content">
-  <form #habitForm="ngForm">
-    <div class="mb-4">
-      <label class="form-label dialog-label">Nome do Hábito</label>
-      <input
-        type="text"
-        class="form-control theme-input"
-        [(ngModel)]="formData.title"
-        name="title"
-        #title="ngModel"
-        required
-        placeholder="Ex: Beber água"
-      />
-      <div *ngIf="title.invalid && (title.dirty || title.touched)" class="error-text">
-        O nome é obrigatório.
-      </div>
+<section class="app-dialog habit-dialog" data-testid="habit-dialog">
+  <header mat-dialog-title class="dialog-header">
+    <span class="dialog-icon material-icons" aria-hidden="true">flag</span>
+    <div class="dialog-heading">
+      <p class="dialog-kicker">Rotina semanal</p>
+      <h2>{{ data?.id ? 'Editar hábito' : 'Novo hábito' }}</h2>
     </div>
+  </header>
 
-    <div class="mb-2">
-      <label class="form-label dialog-label">Escolha um Ícone</label>
-      <div class="icon-selection-grid d-flex flex-wrap gap-2 justify-content-between">
-        <button
-          type="button"
-          *ngFor="let icon of iconSuggestions"
-          class="icon-choice-btn"
-          [class.selected]="formData.icon === icon"
-          (click)="selectIcon(icon)"
+  <mat-dialog-content class="dialog-content">
+    <form #habitForm="ngForm" class="dialog-form">
+      <label class="dialog-field" for="habit-title">
+        <span class="dialog-label">Nome do hábito</span>
+        <span class="dialog-control">
+          <span class="material-icons dialog-control__icon" aria-hidden="true">edit_note</span>
+          <input
+            id="habit-title"
+            data-testid="habit-title-input"
+            type="text"
+            class="form-control theme-input dialog-input"
+            [(ngModel)]="formData.title"
+            name="title"
+            #title="ngModel"
+            required
+            placeholder="Ex: Beber água"
+            autocomplete="off"
+            [attr.aria-invalid]="title.invalid && (title.dirty || title.touched) ? 'true' : 'false'"
+            aria-describedby="habit-title-error"
+          />
+        </span>
+        <span
+          *ngIf="title.invalid && (title.dirty || title.touched)"
+          id="habit-title-error"
+          class="dialog-error"
+          role="alert"
         >
-          {{ icon }}
-        </button>
-      </div>
-      <input type="hidden" [(ngModel)]="formData.icon" name="icon" required #iconHidden="ngModel" />
-      <div *ngIf="!formData.icon && habitForm.submitted" class="error-text">
-        Selecione um ícone.
-      </div>
-    </div>
-  </form>
-</mat-dialog-content>
+          O nome é obrigatório.
+        </span>
+      </label>
 
-<mat-dialog-actions align="end" class="dialog-actions border-0">
-  <button type="button" class="btn btn-cancel" (click)="onClose()">Cancelar</button>
-  <button
-    type="button"
-    class="btn btn-habit-primary px-4 shadow-sm"
-    [disabled]="habitForm.invalid || !formData.icon"
-    (click)="onSave()"
-  >
-    {{ data?.id ? 'Salvar' : 'Criar' }}
-  </button>
-</mat-dialog-actions>
+      <fieldset
+        class="icon-picker"
+        [class.icon-picker--invalid]="!formData.icon && habitForm.submitted"
+      >
+        <legend class="dialog-label">Escolha um ícone</legend>
+        <div class="icon-selection-grid" role="radiogroup" aria-label="Ícones sugeridos">
+          <button
+            type="button"
+            *ngFor="let icon of iconSuggestions"
+            class="icon-choice-btn"
+            data-testid="habit-icon-option"
+            [class.selected]="formData.icon === icon"
+            [attr.aria-pressed]="formData.icon === icon"
+            (click)="selectIcon(icon)"
+          >
+            <span aria-hidden="true">{{ icon }}</span>
+          </button>
+        </div>
+        <input
+          type="hidden"
+          [(ngModel)]="formData.icon"
+          name="icon"
+          required
+          #iconHidden="ngModel"
+        />
+        <span *ngIf="!formData.icon && habitForm.submitted" class="dialog-error" role="alert">
+          Selecione um ícone.
+        </span>
+      </fieldset>
+    </form>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end" class="dialog-actions">
+    <button type="button" class="btn dialog-button dialog-button--ghost" (click)="onClose()">
+      Cancelar
+    </button>
+    <button
+      type="button"
+      class="btn dialog-button dialog-button--primary"
+      data-testid="habit-save-button"
+      [disabled]="habitForm.invalid || !formData.icon"
+      (click)="onSave()"
+    >
+      {{ data?.id ? 'Salvar' : 'Criar' }}
+    </button>
+  </mat-dialog-actions>
+</section>

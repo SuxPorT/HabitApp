@@ -1,98 +1,74 @@
 @use 'variables' as global;
 
-.dialog-title {
-  color: global.$text-main;
-  padding-top: 1rem;
-}
-
-.dialog-label {
-  font-size: 0.75rem;
-  font-weight: bold;
-  color: global.$text-muted;
-  text-transform: uppercase;
-  margin-bottom: 0.5rem;
+:host {
   display: block;
 }
 
-.theme-input {
-  background-color: global.$surface-high !important;
-  color: global.$text-main;
-  border: 2px solid transparent;
-  border-radius: 12px;
-  padding: 0.75rem;
-  transition: all 0.2s;
-
-  &:focus {
-    background-color: var(--mat-sys-surface) !important;
-    border: 2px solid global.$primary-color !important;
-    box-shadow: none;
+.habit-dialog {
+  .dialog-icon {
+    background-color: color-mix(in srgb, global.$primary-container 82%, global.$surface-low);
   }
+}
 
-  &.ng-invalid.ng-touched {
-    border: 2px solid #ff5252 !important;
-  }
+.icon-picker {
+  min-width: 0;
+  display: grid;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 1rem;
+  border: 1px solid global.$outline;
+  border-radius: global.$radius-lg;
+  background-color: color-mix(in srgb, global.$surface-high 86%, global.$surface-low);
 }
 
 .icon-selection-grid {
-  background-color: global.$surface-high;
-  padding: 1rem;
-  border-radius: 16px;
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 0.55rem;
 }
 
 .icon-choice-btn {
-  width: 45px;
-  height: 45px;
-  border-radius: 10px;
-  border: 2px solid transparent;
-  background: global.$surface-low;
-  font-size: 1.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s;
+  width: 100%;
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  border: 1px solid global.$outline;
+  border-radius: global.$radius-md;
+  background-color: global.$surface-low;
+  color: global.$text-main;
+  box-shadow: global.$shadow-sm;
+  font-size: 1.45rem;
+  line-height: 1;
+  cursor: pointer;
+  transition:
+    background-color global.$transition-fast,
+    border-color global.$transition-fast,
+    box-shadow global.$transition-fast,
+    transform global.$transition-fast;
 
   &:hover {
-    background-color: global.$outline;
+    border-color: global.$outline-strong;
+    background-color: global.$primary-container;
+    box-shadow: global.$shadow-md;
+    transform: translateY(-1px);
   }
 
   &.selected {
     border-color: global.$primary-color;
-    background-color: var(--mat-sys-surface);
-    transform: scale(1.1);
+    background-color: global.$primary-color;
+    color: global.$on-primary;
+    box-shadow: 0 0 0 4px var(--app-focus-ring);
+    transform: translateY(-1px);
   }
 }
 
-.error-text {
-  color: #ff5252;
-  font-size: 0.7rem;
-  margin-top: 4px;
-  font-weight: 500;
+.icon-picker--invalid {
+  border-color: global.$danger-color;
+  box-shadow: 0 0 0 0.22rem color-mix(in srgb, global.$danger-color 14%, transparent);
 }
 
-.btn-cancel {
-  color: global.$text-muted;
-  font-weight: 600;
-  border: none;
-  background: none;
-  margin-right: 1rem;
-}
-
-.btn-habit-primary {
-  background-color: global.$primary-color;
-  color: global.$on-primary;
-  border: none;
-  border-radius: 12px;
-  padding: 0.5rem 1.5rem;
-  font-weight: 600;
-
-  &:disabled {
-    opacity: 0.5;
-    filter: grayscale(1);
-    cursor: not-allowed;
+@media (max-width: 575.98px) {
+  .icon-selection-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
-}
-
-::ng-deep .mat-mdc-dialog-container .mdc-dialog__surface {
-  border-radius: 24px !important;
-  background-color: global.$surface-low !important;
 }

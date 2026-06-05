@@ -4,11 +4,23 @@ import { MatDialog } from '@angular/material/dialog';
 import { Observable, combineLatest } from 'rxjs';
 import { map, startWith, take } from 'rxjs/operators';
 import { Habit } from '../../../models/habit.model';
+import { UserResponse } from '../../../models/user-responde.model';
 import { HabitDialog } from '../dialogs/habit-dialog/habit-dialog';
 import { HabitService } from '../../../services/habit-service';
 import { LoadingService } from '../../../services/loading-service';
 import { UserService } from '../../../services/user-service';
 import { ConfirmDialog } from '../dialogs/confirm-dialog/confirm-dialog';
+
+interface HabitsViewModel {
+  habits: Habit[];
+  activeHabits: number;
+  completedToday: number;
+  completionPercent: number;
+  currentStreak: number;
+  successRate: number;
+  totalCompletions: number;
+  motivationalMessage: string;
+}
 
 @Component({
   selector: 'app-habits',
@@ -17,9 +29,11 @@ import { ConfirmDialog } from '../dialogs/confirm-dialog/confirm-dialog';
   standalone: false
 })
 export class Habits implements OnInit {
-  weekDays: string[] = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
-  currentDayIndex: number = new Date().getDay();
-  filteredHabits$!: Observable<Habit[]>;
+  weekDays: string[] = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+  currentDayIndex = new Date().getDay();
+  greeting = this.buildGreeting(new Date());
+  view$!: Observable<HabitsViewModel>;
+  user$!: Observable<UserResponse | null>;
   loading$!: Observable<boolean>;
   filterControl = new FormControl('', { nonNullable: true });
 
@@ -32,21 +46,36 @@ export class Habits implements OnInit {
 
   ngOnInit(): void {
     this.loading$ = this.loadingService.loading$;
+    this.user$ = this.userService.getUser();
 
     this.triggerRefresh();
 
-    this.filteredHabits$ = combineLatest([
+    this.view$ = combineLatest([
       this.habitService.habits$,
       this.filterControl.valueChanges.pipe(startWith(''))
     ]).pipe(
       map(([habits, filterValue]) => {
         const search = filterValue.toLowerCase().trim();
-        return search ? habits.filter(h => h.title.toLowerCase().includes(search)) : habits;
+        const filteredHabits = search
+          ? habits.filter(habit => habit.title.toLowerCase().includes(search))
+          : habits;
+
+        return this.createViewModel(filteredHabits);
       })
     );
   }
 
-  openNewHabitDialog(habit?: Habit): void {
+  getFirstName(name?: string): string {
+    return name?.trim().split(/\s+/)[0] || 'Victor';
+  }
+
+  isHabitCompletedToday(habit: Habit): boolean {
+    return Boolean(habit.completedDays?.[this.currentDayIndex]);
+  }
+
+  openNewHabitDialog(habit?: Habit, event?: Event): void {
+    event?.stopPropagation();
+
     const dialogRef = this.dialog.open(HabitDialog, {
       width: '450px',
       data: habit ? { ...habit } : null,
@@ -83,14 +112,23 @@ export class Habits implements OnInit {
     this.habitService.toggleHabitDay(habitId, dayIndex).subscribe();
   }
 
-  deleteHabit(habit: Habit): void {
+  toggleToday(habit: Habit, event?: Event): void {
+    event?.preventDefault();
+    event?.stopPropagation();
+
+    this.toggleHabit(habit.id, this.currentDayIndex);
+  }
+
+  deleteHabit(habit: Habit, event?: Event): void {
+    event?.stopPropagation();
+
     const dialogRef = this.dialog.open(ConfirmDialog, {
       width: '400px',
       panelClass: 'custom-dialog-container',
       data: {
-        title: '🗑️ Excluir Hábito',
-        message: `Tem certeza que deseja excluir o hábito <strong>"${habit.title}"</strong>?<br />Esta ação não poderá ser desfeita.`,
-        confirmBtnText: 'Excluir'
+        title: 'Delete Habit',
+        message: `Delete <strong>"${habit.title}"</strong>?<br />This action cannot be undone.`,
+        confirmBtnText: 'Delete'
       }
     });
 
@@ -101,6 +139,63 @@ export class Habits implements OnInit {
         });
       }
     });
+  }
+
+  private createViewModel(habits: Habit[]): HabitsViewModel {
+    const activeHabits = habits.length;
+    const completedToday = habits.filter(habit => this.isHabitCompletedToday(habit)).length;
+    const totalCompletions = habits.reduce(
+      (total, habit) => total + habit.completedDays.filter(Boolean).length,
+      0
+    );
+    const totalPossible = activeHabits * this.weekDays.length;
+    const completionPercent = activeHabits ? Math.round((completedToday / activeHabits) * 100) : 0;
+    const successRate = totalPossible ? Math.round((totalCompletions / totalPossible) * 100) : 0;
+    const currentStreak = Math.max(0, ...habits.map(habit => habit.streak || 0));
+
+    return {
+      habits,
+      activeHabits,
+      completedToday,
+      completionPercent,
+      currentStreak,
+      successRate,
+      totalCompletions,
+      motivationalMessage: this.getMotivationalMessage(activeHabits, completedToday)
+    };
+  }
+
+  private getMotivationalMessage(activeHabits: number, completedToday: number): string {
+    if (!activeHabits) {
+      return 'Create your first habit and start a fresh streak today.';
+    }
+
+    if (completedToday === activeHabits) {
+      return 'Perfect day. Your streak is protected.';
+    }
+
+    if (!completedToday) {
+      return 'Start with one small win. Tap any habit to complete it.';
+    }
+
+    const remaining = activeHabits - completedToday;
+    const label = remaining === 1 ? 'habit' : 'habits';
+
+    return `${remaining} ${label} left for a perfect day.`;
+  }
+
+  private buildGreeting(date: Date): string {
+    const hour = date.getHours();
+
+    if (hour < 12) {
+      return 'Good Morning';
+    }
+
+    if (hour < 18) {
+      return 'Good Afternoon';
+    }
+
+    return 'Good Evening';
   }
 
   private triggerRefresh(): void {

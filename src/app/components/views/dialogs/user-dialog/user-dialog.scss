@@ -1,70 +1,22 @@
 @use 'variables' as global;
 
-.dialog-title {
-  color: global.$text-main;
-  padding-top: 1rem;
-}
-
-.dialog-label {
-  font-size: 0.75rem;
-  font-weight: bold;
-  color: global.$text-muted;
-  text-transform: uppercase;
-  margin-bottom: 0.5rem;
+:host {
   display: block;
 }
 
-.theme-input {
-  background-color: global.$surface-high !important;
-  color: global.$text-main;
-  border: 2px solid transparent;
-  border-radius: 12px;
-  padding: 0.75rem;
-  transition: all 0.2s;
-
-  &:focus {
-    background-color: var(--mat-sys-surface) !important;
-    border: 2px solid global.$primary-color !important;
-    box-shadow: none;
-  }
-
-  &.ng-invalid.ng-touched {
-    border: 2px solid #ff5252 !important;
+.user-dialog {
+  .dialog-icon {
+    background-color: color-mix(in srgb, global.$primary-container 70%, global.$surface-high);
   }
 }
 
-.error-text {
-  color: #ff5252;
-  font-size: 0.7rem;
-  margin-top: 0.25rem;
+.dialog-form {
+  gap: 0.95rem;
 }
 
-.btn-cancel {
-  background-color: transparent;
-  color: global.$text-muted;
+.dialog-help {
+  padding: 0.65rem 0.75rem;
   border: 1px solid global.$outline;
-  border-radius: 12px;
-  padding: 0.6rem 1.2rem;
-  font-weight: 600;
-  transition: all 0.2s;
-
-  &:hover {
-    background-color: global.$outline;
-    color: global.$text-main;
-  }
-}
-
-.btn-habit-primary {
-  background-color: global.$primary-color;
-  color: global.$on-primary;
-  border: none;
-  border-radius: 12px;
-  padding: 0.6rem 1.2rem;
-  font-weight: 600;
-  transition: all 0.2s;
-
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
+  border-radius: global.$radius-md;
+  background-color: color-mix(in srgb, global.$surface-high 78%, transparent);
 }

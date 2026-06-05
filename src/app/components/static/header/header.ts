@@ -6,21 +6,28 @@ import { UserService } from '../../../services/user-service';
 import { UserResponse } from '../../../models/user-responde.model';
 import { UserDialog } from '../../views/dialogs/user-dialog/user-dialog';
 import { ConfirmDialog } from '../../views/dialogs/confirm-dialog/confirm-dialog';
+import { ResolvedTheme, ThemeMode, ThemeService } from '../../../services/theme-service';
 
 @Component({
   selector: 'app-header',
   templateUrl: './header.html',
   styleUrl: './header.scss',
-  standalone: false
+  standalone: false,
 })
 export class Header implements OnInit {
   isLoggedIn$!: Observable<UserResponse | null>;
+  readonly themeMode$: Observable<ThemeMode>;
+  readonly resolvedTheme$: Observable<ResolvedTheme>;
 
   constructor(
     private userService: UserService,
     private router: Router,
-    private dialog: MatDialog
-  ) { }
+    private dialog: MatDialog,
+    private themeService: ThemeService,
+  ) {
+    this.themeMode$ = this.themeService.mode$;
+    this.resolvedTheme$ = this.themeService.resolvedTheme$;
+  }
 
   ngOnInit(): void {
     this.isLoggedIn$ = this.userService.getUser();
@@ -30,8 +37,12 @@ export class Header implements OnInit {
     this.dialog.open(UserDialog, {
       width: '450px',
       data: user,
-      panelClass: 'custom-dialog-container'
+      panelClass: 'custom-dialog-container',
     });
+  }
+
+  toggleTheme(): void {
+    this.themeService.toggleManualTheme();
   }
 
   logout(): void {
@@ -39,10 +50,10 @@ export class Header implements OnInit {
       width: '400px',
       panelClass: 'custom-dialog-container',
       data: {
-        title: '🚪 Sair do Aplicativo',
-        message: 'Deseja realmente sair da sua conta?',
-        confirmBtnText: 'Sair'
-      }
+        title: 'Sign out',
+        message: 'Do you want to sign out of your account?',
+        confirmBtnText: 'Sign out',
+      },
     });
 
     dialogRef.afterClosed().subscribe((confirmed: boolean) => {
