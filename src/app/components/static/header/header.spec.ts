@@ -95,12 +95,12 @@ describe('Header', () => {
     );
 
     expect(links).toEqual([
-      'Dashboard',
-      'Insights',
-      'Streaks',
-      'Achievements',
-      'Recurrences',
-      'Notifications',
+      'Painel',
+      'Análises',
+      'Sequências',
+      'Conquistas',
+      'Recorrências',
+      'Notificações',
     ]);
   });
 

@@ -1,12 +1,12 @@
 <section class="login-container" aria-labelledby="auth-title">
   <div class="login-shell">
-    <aside class="login-story" aria-label="HabitApp">
+    <aside class="login-story" aria-label="Aplicativo de hábitos">
       <div class="brand-lockup">
         <span class="brand-mark" aria-hidden="true">
           <img src="app-logo.svg" alt="" class="brand-logo" />
         </span>
         <span class="brand-copy">
-          <span class="brand-kicker">HabitApp</span>
+          <span class="brand-kicker">Hábitos</span>
           <span class="brand-title">Rotina em progresso</span>
         </span>
       </div>
@@ -57,14 +57,14 @@
           [attr.aria-selected]="!isLoginMode"
           (click)="toggleMode(false)"
         >
-          Criar Conta
+          Criar conta
         </button>
       </div>
 
       <form id="auth-form" class="auth-form" (ngSubmit)="onSubmit()" #authForm="ngForm">
         @if (!isLoginMode) {
           <div class="form-field">
-            <label for="auth-name">Nome Completo</label>
+            <label for="auth-name">Nome completo</label>
             <div class="field-control">
               <span class="material-icons field-icon" aria-hidden="true">badge</span>
               <input
@@ -143,7 +143,7 @@
             <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
             <span>Processando...</span>
           } @else {
-            <span>{{ isLoginMode ? 'Entrar' : 'Criar Conta' }}</span>
+            <span>{{ isLoginMode ? 'Entrar' : 'Criar conta' }}</span>
             <span class="material-icons submit-icon" aria-hidden="true">arrow_forward</span>
           }
         </button>

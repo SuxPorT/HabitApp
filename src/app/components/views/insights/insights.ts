@@ -80,7 +80,7 @@ export class Insights implements OnInit {
         );
       }),
       catchError(() => {
-        this.errorMessage = 'Could not load insights right now.';
+        this.errorMessage = 'Não foi possível carregar as análises agora.';
         return of(null);
       }),
       finalize(() => {
@@ -123,56 +123,56 @@ export class Insights implements OnInit {
 
   getCompletionCopy(rate: number): string {
     if (rate >= 85) {
-      return 'Strong rhythm';
+      return 'Ritmo forte';
     }
 
     if (rate >= 60) {
-      return 'Building consistency';
+      return 'Consistência em construção';
     }
 
     if (rate > 0) {
-      return 'Needs attention';
+      return 'Precisa de atenção';
     }
 
-    return 'No data yet';
+    return 'Sem dados ainda';
   }
 
   getCalendarTitle(day: CalendarAnalyticsDay): string {
     const label = this.formatDate(day.date);
 
     if (day.status === 'none') {
-      return `${label}: no habits scheduled`;
+      return `${label}: nenhum hábito programado`;
     }
 
-    return `${label}: ${day.completedCount}/${day.scheduledCount} completed`;
+    return `${label}: ${day.completedCount}/${day.scheduledCount} concluídos`;
   }
 
   formatDate(date: string): string {
-    return new Date(`${date}T00:00:00`).toLocaleDateString('en-US', {
+    return new Date(`${date}T00:00:00`).toLocaleDateString('pt-BR', {
       month: 'short',
       day: 'numeric',
     });
   }
 
   formatWeekday(dayOfWeek?: string | null): string {
-    return dayOfWeek ?? 'No pattern';
+    return this.translateWeekday(dayOfWeek) ?? 'Nenhum padrão';
   }
 
   formatWeekdayPlural(dayOfWeek?: string | null): string {
     if (!dayOfWeek) {
-      return 'your scheduled days';
+      return 'seus dias programados';
     }
 
-    return dayOfWeek.endsWith('s') ? dayOfWeek : `${dayOfWeek}s`;
+    return this.translateWeekday(dayOfWeek, true) ?? 'seus dias programados';
   }
 
   getMissedCountLabel(habit: HabitAnalytics): string {
     const missedCount = habit.missedScheduledDates.length;
-    return missedCount === 1 ? '1 missed day' : `${missedCount} missed days`;
+    return missedCount === 1 ? '1 dia não concluído' : `${missedCount} dias não concluídos`;
   }
 
   getLastCompletedLabel(habit: HabitAnalytics): string {
-    return habit.lastCompletedDate ? this.formatDate(habit.lastCompletedDate) : 'No completions yet';
+    return habit.lastCompletedDate ? this.formatDate(habit.lastCompletedDate) : 'Nenhuma conclusão ainda';
   }
 
   private loadHabitBreakdown(userId: number, habits: Habit[]): Observable<HabitAnalytics[]> {
@@ -199,21 +199,21 @@ export class Insights implements OnInit {
 
     if (!this.hasInsightData(overview)) {
       return [
-        'Complete a few habits to unlock insights.',
-        'Your patterns will appear here after a few days of tracking.',
+        'Conclua alguns hábitos para liberar análises.',
+        'Seus padrões aparecerão aqui após alguns dias de acompanhamento.',
       ];
     }
 
     const messages = [
-      `You are most consistent on ${this.formatWeekdayPlural(overview.bestDayOfWeek?.dayOfWeek)}.`,
+      `Você tem mais consistência em ${this.formatWeekdayPlural(overview.bestDayOfWeek?.dayOfWeek)}.`,
     ];
 
     if (overview.bestHabit) {
-      messages.push(`${overview.bestHabit.title} has your strongest streak.`);
+      messages.push(`${overview.bestHabit.title} tem sua sequência mais forte.`);
     }
 
     if (overview.weakestHabit) {
-      messages.push(`${overview.weakestHabit.title} is your biggest opportunity.`);
+      messages.push(`${overview.weakestHabit.title} é sua maior oportunidade de melhoria.`);
     }
 
     messages.push(this.getTrendMessage(result.trends));
@@ -223,17 +223,41 @@ export class Insights implements OnInit {
 
   private getTrendMessage(trends: TrendAnalytics): string {
     if (trends.last7Days.scheduledHabits === 0 || trends.last30Days.scheduledHabits === 0) {
-      return 'Your rhythm will become clearer as more scheduled days pass.';
+      return 'Seu ritmo ficará mais claro conforme mais dias programados passarem.';
     }
 
     if (trends.last7Days.completionRate > trends.last30Days.completionRate) {
-      return 'Your completion rate improved this week.';
+      return 'Sua taxa de conclusão melhorou nesta semana.';
     }
 
     if (trends.last7Days.completionRate < trends.last30Days.completionRate) {
-      return 'This week is softer than your 30-day rhythm.';
+      return 'Esta semana está abaixo do seu ritmo de 30 dias.';
     }
 
-    return 'This week is matching your 30-day rhythm.';
+    return 'Esta semana está acompanhando seu ritmo de 30 dias.';
+  }
+
+  private translateWeekday(dayOfWeek?: string | null, plural = false): string | null {
+    if (!dayOfWeek) {
+      return null;
+    }
+
+    const normalized = dayOfWeek.replace(/s$/, '');
+    const labels: Record<string, { singular: string; plural: string }> = {
+      Sunday: { singular: 'domingo', plural: 'domingos' },
+      Monday: { singular: 'segunda-feira', plural: 'segundas-feiras' },
+      Tuesday: { singular: 'terça-feira', plural: 'terças-feiras' },
+      Wednesday: { singular: 'quarta-feira', plural: 'quartas-feiras' },
+      Thursday: { singular: 'quinta-feira', plural: 'quintas-feiras' },
+      Friday: { singular: 'sexta-feira', plural: 'sextas-feiras' },
+      Saturday: { singular: 'sábado', plural: 'sábados' },
+    };
+    const label = labels[normalized];
+
+    if (!label) {
+      return dayOfWeek;
+    }
+
+    return plural ? label.plural : label.singular;
   }
 }

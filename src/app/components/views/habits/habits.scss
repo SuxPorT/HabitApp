@@ -210,7 +210,7 @@
   border-radius: global.$radius-lg;
   background: global.$surface-low;
   box-shadow: global.$shadow-sm;
-  padding: 0.9rem 4.35rem 0.9rem 0.9rem;
+  padding: 0.9rem 11.15rem 0.9rem 0.9rem;
   cursor: pointer;
   transition: all global.$transition-base;
 }
@@ -303,13 +303,20 @@
   font-size: 0.95rem;
 }
 
+.habit-card__actions {
+  position: absolute;
+  right: 0.7rem;
+  bottom: 1rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
 .week-strip {
-  grid-column: 2;
   display: flex;
   align-items: center;
   gap: 0.35rem;
   min-width: 0;
-  padding-top: 0.2rem;
 }
 
 .week-indicator {
@@ -349,6 +356,7 @@
   right: 0.7rem;
   width: 34px;
   height: 34px;
+  flex: 0 0 auto;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -380,6 +388,16 @@
   background: global.$surface-low;
   box-shadow: global.$shadow-sm;
   padding: 0.9rem;
+}
+
+.reminder-summary {
+  display: grid;
+  gap: 5px;
+}
+
+.reminder-summary__item {
+  display: flex;
+  align-items: center;
 }
 
 .stat-card__label {
@@ -480,12 +498,17 @@
   }
 
   .habit-card {
-    padding-right: 3.7rem;
+    padding: 0.9rem 3.7rem 3.25rem 0.9rem;
   }
 
   .habit-icon-wrapper {
     width: 44px;
     height: 44px;
+  }
+
+  .habit-card__actions {
+    right: 0.55rem;
+    bottom: 0.55rem;
   }
 
   .habit-menu-trigger {

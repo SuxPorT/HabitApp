@@ -29,8 +29,8 @@ describe('Achievements', () => {
     activeMonthlyChallenges: 2,
     mostAtRiskHabit: null,
     motivationalInsights: [
-      'Your rhythm is improving this week.',
-      'Monthly Consistency is 80% complete.',
+      'Seu ritmo está melhorando nesta semana.',
+      'Consistência mensal está 80% completo.',
     ],
   };
 
@@ -43,70 +43,70 @@ describe('Achievements', () => {
     achievements: [
       {
         id: 'first-check',
-        title: 'First Check',
-        description: 'Complete your first scheduled habit.',
+        title: 'Primeira marcação',
+        description: 'Conclua seu primeiro hábito programado.',
         icon: 'check_circle',
-        category: 'Foundation',
+        category: 'Fundação',
         currentValue: 1,
         targetValue: 1,
         progressPercent: 100,
         isUnlocked: true,
-        message: 'Unlocked',
+        message: 'Liberada',
       },
       {
         id: 'ten-checks',
-        title: 'Ten Checks',
-        description: 'Reach 10 total habit completions.',
+        title: 'Dez marcações',
+        description: 'Alcance 10 conclusões de hábitos no total.',
         icon: 'done_all',
-        category: 'Foundation',
+        category: 'Fundação',
         currentValue: 6,
         targetValue: 10,
         progressPercent: 60,
         isUnlocked: false,
-        message: 'Build a visible base.',
+        message: 'Construa uma base visível.',
       },
       {
         id: 'week-streak',
-        title: 'Seven-Day Streak',
-        description: 'Maintain a perfect overall streak for 7 scheduled days.',
+        title: 'Sequência de sete dias',
+        description: 'Mantenha uma sequência geral perfeita por 7 dias programados.',
         icon: 'local_fire_department',
-        category: 'Streak',
+        category: 'Sequência',
         currentValue: 4,
         targetValue: 7,
         progressPercent: 57,
         isUnlocked: false,
-        message: 'Protect every scheduled day for a week.',
+        message: 'Proteja todos os dias programados por uma semana.',
       },
     ],
   };
 
   const monthlyChallenges: MonthlyChallengeSet = {
     userId: 1,
-    monthLabel: 'June 2026',
+    monthLabel: 'junho 2026',
     startDate: '2026-06-01',
     endDate: '2026-06-05',
     challenges: [
       {
         id: 'monthly-consistency',
-        title: 'Monthly Consistency',
-        description: 'Reach an 85% completion rate on scheduled habits this month.',
+        title: 'Consistência mensal',
+        description: 'Alcance uma taxa de conclusão de 85% nos hábitos programados deste mês.',
         icon: 'calendar_month',
         currentValue: 80,
         targetValue: 85,
         progressPercent: 94,
         isCompleted: false,
-        message: 'Keep the month steady.',
+        message: 'Mantenha o mês estável.',
       },
       {
         id: 'perfect-days',
-        title: 'Perfect Days',
-        description: 'Finish every scheduled habit on 10 days this month.',
+        title: 'Dias perfeitos',
+        description: 'Finalize todos os hábitos programados em 10 dias deste mês.',
         icon: 'verified',
         currentValue: 2,
         targetValue: 10,
         progressPercent: 20,
         isCompleted: false,
-        message: 'Stack more perfect days.',
+        message: 'Acumule mais dias perfeitos.',
       },
     ],
   };
@@ -148,11 +148,11 @@ describe('Achievements', () => {
     fixture = TestBed.createComponent(Achievements);
     fixture.detectChanges();
 
-    expect(view().textContent).toContain('Progress worth noticing.');
+    expect(view().textContent).toContain('Progresso que merece atenção.');
     expect(view().textContent).toContain('1');
-    expect(view().textContent).toContain('Monthly Consistency');
-    expect(view().textContent).toContain('First Check');
-    expect(view().textContent).toContain('Ten Checks');
+    expect(view().textContent).toContain('Consistência mensal');
+    expect(view().textContent).toContain('Primeira marcação');
+    expect(view().textContent).toContain('Dez marcações');
     expect(view().querySelectorAll('[data-testid="monthly-challenge-card"]').length).toBe(2);
     expect(view().querySelectorAll('[data-testid="achievement-card"]').length).toBe(3);
   });
@@ -191,7 +191,7 @@ describe('Achievements', () => {
     expect(fixture.componentInstance.loading).toBe(false);
     expect(fixture.componentInstance.view?.summary).toEqual(summary);
     expect(view().querySelector('[data-testid="achievements-loading"]')).toBeFalsy();
-    expect(view().textContent).toContain('Progress worth noticing.');
+    expect(view().textContent).toContain('Progresso que merece atenção.');
   });
 
   it('shows an empty state when no achievement definitions are available', () => {
@@ -206,6 +206,6 @@ describe('Achievements', () => {
     fixture.detectChanges();
 
     expect(view().querySelector('[data-testid="achievements-empty-state"]')).toBeTruthy();
-    expect(view().textContent).toContain('Complete scheduled habits to unlock achievements.');
+    expect(view().textContent).toContain('Conclua hábitos programados para liberar conquistas.');
   });
 });

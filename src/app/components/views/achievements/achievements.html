@@ -2,57 +2,57 @@
   @if (loading) {
     <section class="achievements-loading" data-testid="achievements-loading" aria-live="polite">
       <span class="spinner-border" aria-hidden="true"></span>
-      <span>Updating achievements...</span>
+      <span>Atualizando conquistas...</span>
     </section>
   } @else if (errorMessage) {
     <section class="empty-state" data-testid="achievements-error">
       <span class="material-icons empty-state__icon" aria-hidden="true">workspace_premium</span>
-      <h1>Achievements are unavailable</h1>
+      <h1>Conquistas indisponíveis</h1>
       <p>{{ errorMessage }}</p>
       <button type="button" class="btn achievements-secondary" (click)="loadAchievements()">
         <span class="material-icons" aria-hidden="true">refresh</span>
-        <span>Try again</span>
+        <span>Tentar novamente</span>
       </button>
     </section>
   } @else if (view; as achievementsView) {
     <section class="achievements-hero" aria-labelledby="achievements-title">
       <div>
-        <p class="section-kicker">Achievements</p>
-        <h1 id="achievements-title">Progress worth noticing.</h1>
-        <p>Milestones and challenges are unlocked from scheduled completions and live streaks.</p>
+        <p class="section-kicker">Conquistas</p>
+        <h1 id="achievements-title">Progresso que merece atenção.</h1>
+        <p>Marcos e desafios são liberados a partir de conclusões programadas e sequências ativas.</p>
       </div>
-      <div class="trophy-score" aria-label="Unlocked achievements">
+      <div class="trophy-score" aria-label="Conquistas liberadas">
         <span>{{ achievementsView.achievementSet.unlockedCount }}</span>
-        <small>of {{ achievementsView.achievementSet.totalCount }} unlocked</small>
+        <small>de {{ achievementsView.achievementSet.totalCount }} liberadas</small>
       </div>
     </section>
 
     @if (!hasAchievementData(achievementsView)) {
       <section class="empty-state" data-testid="achievements-empty-state">
         <span class="material-icons empty-state__icon" aria-hidden="true">workspace_premium</span>
-        <h2>Complete scheduled habits to unlock achievements.</h2>
-        <p>Progress tracking appears after your first few habit completions.</p>
+        <h2>Conclua hábitos programados para liberar conquistas.</h2>
+        <p>O acompanhamento de progresso aparece após as primeiras conclusões de hábitos.</p>
       </section>
     } @else {
-      <section class="achievement-overview" aria-label="Achievement overview">
+      <section class="achievement-overview" aria-label="Visão geral das conquistas">
         <article class="metric-card">
-          <span class="metric-card__label">Consistency score</span>
+          <span class="metric-card__label">Pontuação de consistência</span>
           <strong>{{ achievementsView.summary.consistencyScore }}</strong>
-          <small>motivation index</small>
+          <small>índice de motivação</small>
         </article>
         <article class="metric-card">
-          <span class="metric-card__label">Unlocked</span>
+          <span class="metric-card__label">Liberadas</span>
           <strong>{{ achievementsView.achievementSet.unlockedCount }}</strong>
-          <small>achievements</small>
+          <small>conquistas</small>
         </article>
         <article class="metric-card">
-          <span class="metric-card__label">Monthly challenges</span>
+          <span class="metric-card__label">Desafios mensais</span>
           <strong>{{ achievementsView.summary.activeMonthlyChallenges }}</strong>
-          <small>active this month</small>
+          <small>ativos neste mês</small>
         </article>
       </section>
 
-      <section class="motivation-message-grid" aria-label="Motivational insights">
+      <section class="motivation-message-grid" aria-label="Análises motivacionais">
         @for (message of achievementsView.summary.motivationalInsights; track message) {
           <article class="motivation-message">
             <span class="material-icons" aria-hidden="true">tips_and_updates</span>
@@ -64,7 +64,7 @@
       <section class="challenge-section" aria-labelledby="monthly-challenges-title">
         <div class="section-heading">
           <div>
-            <p class="section-kicker">Monthly challenges</p>
+            <p class="section-kicker">Desafios mensais</p>
             <h2 id="monthly-challenges-title">{{ achievementsView.monthlyChallenges.monthLabel }}</h2>
           </div>
         </div>
@@ -88,7 +88,7 @@
                 [attr.aria-valuenow]="challenge.progressPercent"
                 aria-valuemin="0"
                 aria-valuemax="100"
-                [attr.aria-label]="challenge.title + ' progress'"
+                [attr.aria-label]="challenge.title + ': progresso'"
               >
                 <span [style.width.%]="challenge.progressPercent"></span>
               </div>
@@ -106,8 +106,8 @@
       <section class="achievement-section" aria-labelledby="unlocked-title">
         <div class="section-heading">
           <div>
-            <p class="section-kicker">Unlocked</p>
-            <h2 id="unlocked-title">Already earned</h2>
+            <p class="section-kicker">Liberadas</p>
+            <h2 id="unlocked-title">Já conquistadas</h2>
           </div>
         </div>
 
@@ -122,13 +122,13 @@
                 <h3>{{ achievement.title }}</h3>
                 <p>{{ achievement.description }}</p>
               </div>
-              <span class="achievement-pill">Unlocked</span>
+              <span class="achievement-pill">Liberada</span>
             </article>
           } @empty {
             <div class="empty-state empty-state--compact">
               <span class="material-icons empty-state__icon" aria-hidden="true">emoji_events</span>
-              <h2>No achievements unlocked yet.</h2>
-              <p>Complete your first scheduled habit to begin.</p>
+              <h2>Nenhuma conquista liberada ainda.</h2>
+              <p>Conclua seu primeiro hábito programado para começar.</p>
             </div>
           }
         </div>
@@ -137,8 +137,8 @@
       <section class="achievement-section" aria-labelledby="progress-title">
         <div class="section-heading">
           <div>
-            <p class="section-kicker">In progress</p>
-            <h2 id="progress-title">Next milestones</h2>
+            <p class="section-kicker">Em andamento</p>
+            <h2 id="progress-title">Próximos marcos</h2>
           </div>
         </div>
 
@@ -158,7 +158,7 @@
                   [attr.aria-valuenow]="achievement.progressPercent"
                   aria-valuemin="0"
                   aria-valuemax="100"
-                  [attr.aria-label]="achievement.title + ' progress'"
+                  [attr.aria-label]="achievement.title + ': progresso'"
                 >
                   <span [style.width.%]="achievement.progressPercent"></span>
                 </div>

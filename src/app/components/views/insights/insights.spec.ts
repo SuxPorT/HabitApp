@@ -33,10 +33,10 @@ describe('Insights', () => {
     averageCompletionRate: 87,
     bestHabit: {
       habitId: 1,
-      title: 'Reading',
+      title: 'Leitura',
       icon: '📖',
       color: '',
-      category: 'Mind',
+      category: 'Mente',
       completionRate: 95,
       currentStreak: 8,
       longestStreak: 12,
@@ -44,10 +44,10 @@ describe('Insights', () => {
     },
     weakestHabit: {
       habitId: 2,
-      title: 'Workout',
+      title: 'Treino',
       icon: '🏋️',
       color: '',
-      category: 'Health',
+      category: 'Saúde',
       completionRate: 62,
       currentStreak: 1,
       longestStreak: 4,
@@ -86,7 +86,7 @@ describe('Insights', () => {
     userId: 1,
     date: '2026-06-05',
     last7Days: {
-      label: 'Last 7 days',
+      label: 'Últimos 7 dias',
       startDate: '2026-05-30',
       endDate: '2026-06-05',
       scheduledHabits: 14,
@@ -95,7 +95,7 @@ describe('Insights', () => {
       dailyBreakdown: createTrendDays(7, 2, 2),
     },
     last30Days: {
-      label: 'Last 30 days',
+      label: 'Últimos 30 dias',
       startDate: '2026-05-07',
       endDate: '2026-06-05',
       scheduledHabits: 60,
@@ -104,7 +104,7 @@ describe('Insights', () => {
       dailyBreakdown: createTrendDays(30, 2, 1),
     },
     last90Days: {
-      label: 'Last 90 days',
+      label: 'Últimos 90 dias',
       startDate: '2026-03-08',
       endDate: '2026-06-05',
       scheduledHabits: 180,
@@ -115,13 +115,13 @@ describe('Insights', () => {
   };
 
   const habits: Habit[] = [
-    createHabit(1, 'Reading'),
-    createHabit(2, 'Workout'),
+    createHabit(1, 'Leitura'),
+    createHabit(2, 'Treino'),
   ];
 
   const habitAnalytics: HabitAnalytics[] = [
-    createHabitAnalytics(1, 'Reading', '📖', 95),
-    createHabitAnalytics(2, 'Workout', '🏋️', 62),
+    createHabitAnalytics(1, 'Leitura', '📖', 95),
+    createHabitAnalytics(2, 'Treino', '🏋️', 62),
   ];
 
   function view(): HTMLElement {
@@ -171,10 +171,10 @@ describe('Insights', () => {
     fixture = TestBed.createComponent(Insights);
     fixture.detectChanges();
 
-    expect(view().textContent).toContain('Your consistency, clearly mapped.');
+    expect(view().textContent).toContain('Sua consistência, mapeada com clareza.');
     expect(view().textContent).toContain('87%');
-    expect(view().textContent).toContain('You are most consistent on Mondays.');
-    expect(view().textContent).toContain('Reading has your strongest streak.');
+    expect(view().textContent).toContain('Você tem mais consistência em segundas-feiras.');
+    expect(view().textContent).toContain('Leitura tem sua sequência mais forte.');
     expect(view().querySelector('[data-testid="calendar-heatmap"]')).toBeTruthy();
     expect(view().querySelectorAll('.heatmap-cell').length).toBeGreaterThanOrEqual(3);
     expect(view().querySelectorAll('[data-testid="habit-insight-card"]').length).toBe(2);
@@ -224,7 +224,7 @@ describe('Insights', () => {
     expect(fixture.componentInstance.loading).toBe(false);
     expect(fixture.componentInstance.view?.overview).toEqual(overview);
     expect(view().querySelector('[data-testid="insights-loading"]')).toBeFalsy();
-    expect(view().textContent).toContain('Your consistency, clearly mapped.');
+    expect(view().textContent).toContain('Sua consistência, mapeada com clareza.');
   });
 
   it('shows a helpful empty state when there is not enough history', () => {
@@ -248,8 +248,8 @@ describe('Insights', () => {
     fixture.detectChanges();
 
     expect(view().querySelector('[data-testid="insights-empty-state"]')).toBeTruthy();
-    expect(view().textContent).toContain('Complete a few habits to unlock insights.');
-    expect(view().textContent).toContain('Your patterns will appear here after a few days of tracking.');
+    expect(view().textContent).toContain('Conclua alguns hábitos para liberar análises.');
+    expect(view().textContent).toContain('Seus padrões aparecerão aqui após alguns dias de acompanhamento.');
   });
 });
 

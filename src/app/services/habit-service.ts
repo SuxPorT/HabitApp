@@ -123,21 +123,21 @@ export class HabitService extends BaseService<Habit> {
       case 'SpecificDaysOfWeek':
         return this.getSpecificDaysLabel(recurrenceConfig);
       case 'Weekdays':
-        return 'Weekdays';
+        return 'Dias úteis';
       case 'Weekends':
-        return 'Weekends';
+        return 'Fins de semana';
       case 'EveryXDays':
         return this.getEveryXDaysLabel(recurrenceConfig);
       case 'Weekly':
-        return 'Weekly';
+        return 'Semanal';
       case 'Monthly':
-        return 'Monthly';
+        return 'Mensal';
       case 'Custom':
-        return 'Custom';
+        return 'Personalizada';
       case 'Daily':
       case 'EveryDay':
       default:
-        return 'Every day';
+        return 'Todos os dias';
     }
   }
 
@@ -319,20 +319,20 @@ export class HabitService extends BaseService<Habit> {
     const days = this.extractDaysFromConfig(recurrenceConfig);
 
     if (!days.length) {
-      return 'Specific days';
+      return 'Dias específicos';
     }
 
-    return days.map((day) => day.slice(0, 3)).join(', ');
+    return days.map((day) => this.translateDayLabel(day)).join(', ');
   }
 
   private getEveryXDaysLabel(recurrenceConfig?: string | null): string {
     const interval = this.extractIntervalFromConfig(recurrenceConfig);
 
     if (!interval || interval <= 1) {
-      return 'Every day';
+      return 'Todos os dias';
     }
 
-    return `Every ${interval} days`;
+    return `A cada ${interval} dias`;
   }
 
   private extractDaysFromConfig(recurrenceConfig?: string | null): string[] {
@@ -389,5 +389,19 @@ export class HabitService extends BaseService<Habit> {
     }
 
     return dayMap.find((day) => day.toLowerCase().startsWith(normalized.slice(0, 3))) ?? '';
+  }
+
+  private translateDayLabel(dayOfWeek: string): string {
+    const labels: Record<string, string> = {
+      Sunday: 'Dom',
+      Monday: 'Seg',
+      Tuesday: 'Ter',
+      Wednesday: 'Qua',
+      Thursday: 'Qui',
+      Friday: 'Sex',
+      Saturday: 'Sáb',
+    };
+
+    return labels[dayOfWeek] ?? dayOfWeek;
   }
 }

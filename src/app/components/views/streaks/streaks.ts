@@ -40,7 +40,7 @@ export class Streaks implements OnInit {
         ? this.motivationService.getStreakCenter(user.id).pipe(take(1))
         : of(null)),
       catchError(() => {
-        this.errorMessage = 'Could not load streaks right now.';
+        this.errorMessage = 'Não foi possível carregar as sequências agora.';
         return of(null);
       }),
       finalize(() => {
@@ -61,27 +61,27 @@ export class Streaks implements OnInit {
   getStatusLabel(habit: HabitStreakStatus): string {
     switch (habit.status) {
       case 'protected':
-        return 'Protected';
+        return 'Protegido';
       case 'at-risk':
-        return 'At risk';
+        return 'Em risco';
       case 'rebuilding':
-        return 'Rebuilding';
+        return 'Reconstruindo';
       case 'new':
       default:
-        return 'New';
+        return 'Novo';
     }
   }
 
   getRiskLabel(habit: MotivationHabitAtRisk): string {
-    return habit.riskLevel === 'high' ? 'High risk' : 'Needs attention';
+    return habit.riskLevel === 'high' ? 'Risco alto' : 'Precisa de atenção';
   }
 
   formatDate(date?: string | null): string {
     if (!date) {
-      return 'No date yet';
+      return 'Sem data ainda';
     }
 
-    return new Date(`${date}T00:00:00`).toLocaleDateString('en-US', {
+    return new Date(`${date}T00:00:00`).toLocaleDateString('pt-BR', {
       month: 'short',
       day: 'numeric',
     });

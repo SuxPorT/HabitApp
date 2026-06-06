@@ -2,26 +2,26 @@
   @if (loading) {
     <section class="notifications-loading" data-testid="notifications-loading" aria-live="polite">
       <span class="spinner-border" aria-hidden="true"></span>
-      <span>Loading notification settings...</span>
+      <span>Carregando configurações de notificações...</span>
     </section>
   } @else if (errorMessage) {
     <section class="empty-state" data-testid="notifications-error">
       <span class="material-icons empty-state__icon" aria-hidden="true">notifications</span>
-      <h1>Notifications are unavailable</h1>
+      <h1>Notificações indisponíveis</h1>
       <p>{{ errorMessage }}</p>
       <button type="button" class="btn notifications-secondary" (click)="loadSettings()">
         <span class="material-icons" aria-hidden="true">refresh</span>
-        <span>Try again</span>
+        <span>Tentar novamente</span>
       </button>
     </section>
   } @else if (view; as notificationView) {
     <section class="notifications-hero" aria-labelledby="notifications-title">
       <div>
-        <p class="section-kicker">Notifications</p>
-        <h1 id="notifications-title">Stay consistent without extra noise.</h1>
-        <p>Reminder timing, quiet hours and motivation are generated from your real schedule.</p>
+        <p class="section-kicker">Notificações</p>
+        <h1 id="notifications-title">Mantenha a consistência sem ruído extra.</h1>
+        <p>Horários de lembrete, período de silêncio e motivação são gerados a partir da sua rotina real.</p>
       </div>
-      <div class="next-reminder-pill" aria-label="Next reminder">
+      <div class="next-reminder-pill" aria-label="Próximo lembrete">
         <span class="material-icons" aria-hidden="true">schedule</span>
         <span>{{ getNextReminderLabel(notificationView.dashboard) }}</span>
       </div>
@@ -31,16 +31,16 @@
       <section class="settings-panel" aria-labelledby="general-settings-title">
         <div class="settings-panel__header">
           <div>
-            <p class="section-kicker">General</p>
-            <h2 id="general-settings-title">Delivery rules</h2>
+            <p class="section-kicker">Geral</p>
+            <h2 id="general-settings-title">Regras de entrega</h2>
           </div>
           <span class="material-icons" aria-hidden="true">tune</span>
         </div>
 
         <label class="toggle-row">
           <span>
-            <strong>Enable notifications</strong>
-            <small>Allow HabitApp to generate reminder payloads.</small>
+            <strong>Ativar notificações</strong>
+            <small>Permitir que o aplicativo gere dados de lembrete.</small>
           </span>
           <input
             type="checkbox"
@@ -51,7 +51,7 @@
 
         <div class="time-grid">
           <label class="time-field" for="quiet-start">
-            <span>Quiet hours start</span>
+            <span>Início do período de silêncio</span>
             <input
               id="quiet-start"
               type="time"
@@ -62,7 +62,7 @@
           </label>
 
           <label class="time-field" for="quiet-end">
-            <span>Quiet hours end</span>
+            <span>Fim do período de silêncio</span>
             <input
               id="quiet-end"
               type="time"
@@ -75,8 +75,8 @@
 
         <label class="toggle-row">
           <span>
-            <strong>Reminder sound</strong>
-            <small>Include sound metadata for future delivery channels.</small>
+            <strong>Som do lembrete</strong>
+            <small>Incluir metadados de som para futuros canais de envio.</small>
           </span>
           <input
             type="checkbox"
@@ -89,15 +89,15 @@
       <section class="settings-panel" aria-labelledby="reminder-settings-title">
         <div class="settings-panel__header">
           <div>
-            <p class="section-kicker">Reminders</p>
-            <h2 id="reminder-settings-title">Default reminder style</h2>
+            <p class="section-kicker">Lembretes</p>
+            <h2 id="reminder-settings-title">Estilo padrão do lembrete</h2>
           </div>
           <span class="material-icons" aria-hidden="true">alarm</span>
         </div>
 
         <div class="time-grid">
           <label class="time-field" for="default-reminder-time">
-            <span>Reminder time</span>
+            <span>Horário do lembrete</span>
             <input
               id="default-reminder-time"
               type="time"
@@ -108,7 +108,7 @@
           </label>
 
           <label class="time-field" for="default-reminder-type">
-            <span>Reminder type</span>
+            <span>Tipo do lembrete</span>
             <select
               id="default-reminder-type"
               class="form-select theme-input"
@@ -126,16 +126,16 @@
       <section class="settings-panel" aria-labelledby="motivation-settings-title">
         <div class="settings-panel__header">
           <div>
-            <p class="section-kicker">Motivation</p>
-            <h2 id="motivation-settings-title">Smart nudges</h2>
+            <p class="section-kicker">Motivação</p>
+            <h2 id="motivation-settings-title">Incentivos inteligentes</h2>
           </div>
           <span class="material-icons" aria-hidden="true">tips_and_updates</span>
         </div>
 
         <label class="toggle-row">
           <span>
-            <strong>Achievement notifications</strong>
-            <small>Prepare achievement payloads when milestones are reached.</small>
+            <strong>Notificações de conquistas</strong>
+            <small>Preparar dados de conquistas quando marcos forem alcançados.</small>
           </span>
           <input
             type="checkbox"
@@ -146,8 +146,8 @@
 
         <label class="toggle-row">
           <span>
-            <strong>Streak protection notifications</strong>
-            <small>Prioritize reminders when a live streak is at risk.</small>
+            <strong>Notificações de proteção de sequência</strong>
+            <small>Priorizar lembretes quando uma sequência ativa estiver em risco.</small>
           </span>
           <input
             type="checkbox"
@@ -158,8 +158,8 @@
 
         <label class="toggle-row">
           <span>
-            <strong>Motivational messages</strong>
-            <small>Use analytics to generate occasional encouragement.</small>
+            <strong>Mensagens motivacionais</strong>
+            <small>Usar análises para gerar incentivos ocasionais.</small>
           </span>
           <input
             type="checkbox"
@@ -169,26 +169,26 @@
         </label>
       </section>
 
-      <section class="preview-panel" aria-label="Reminder preview">
+      <section class="preview-panel" aria-label="Prévia do lembrete">
         <div class="preview-panel__header">
           <div>
-            <p class="section-kicker">Preview</p>
-            <h2>Today’s reminder state</h2>
+            <p class="section-kicker">Prévia</p>
+            <h2>Estado dos lembretes de hoje</h2>
           </div>
-          <span>{{ notificationView.dashboard.payloads.length }} payloads</span>
+          <span>{{ notificationView.dashboard.payloads.length }} itens</span>
         </div>
 
         <div class="preview-stat-grid">
           <article>
-            <span>Upcoming</span>
+            <span>Próximos</span>
             <strong>{{ notificationView.dashboard.upcomingReminders.length }}</strong>
           </article>
           <article>
-            <span>Attention</span>
+            <span>Atenção</span>
             <strong>{{ notificationView.dashboard.habitsAtRisk.length }}</strong>
           </article>
           <article>
-            <span>Missed</span>
+            <span>Não concluídos</span>
             <strong>{{ notificationView.dashboard.missedHabits.length }}</strong>
           </article>
         </div>
@@ -202,7 +202,7 @@
           } @empty {
             <p>
               <span class="material-icons" aria-hidden="true">notifications_none</span>
-              <span>Complete more scheduled habits to unlock smarter reminders.</span>
+              <span>Conclua mais hábitos programados para liberar lembretes mais inteligentes.</span>
             </p>
           }
         </div>
@@ -210,7 +210,7 @@
 
       <div class="settings-actions">
         <button type="button" class="btn notifications-secondary" (click)="loadSettings()">
-          Reset
+          Redefinir
         </button>
         <button
           type="submit"
@@ -218,7 +218,7 @@
           data-testid="notification-save-button"
           [disabled]="saving"
         >
-          {{ saving ? 'Saving...' : 'Save settings' }}
+          {{ saving ? 'Salvando...' : 'Salvar configurações' }}
         </button>
       </div>
     </form>

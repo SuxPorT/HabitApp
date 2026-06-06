@@ -30,10 +30,10 @@ export class Notifications implements OnInit {
   private userId: number | null = null;
 
   reminderTypes: { value: ReminderType; label: string }[] = [
-    { value: 'Standard', label: 'Standard' },
-    { value: 'StreakProtection', label: 'Streak protection' },
-    { value: 'Motivation', label: 'Motivation' },
-    { value: 'Custom', label: 'Custom' },
+    { value: 'Standard', label: 'Padrão' },
+    { value: 'StreakProtection', label: 'Proteção de sequência' },
+    { value: 'Motivation', label: 'Motivação' },
+    { value: 'Custom', label: 'Personalizado' },
   ];
 
   constructor(
@@ -63,7 +63,7 @@ export class Notifications implements OnInit {
         return this.notificationService.getDashboard(user.id).pipe(take(1));
       }),
       catchError(() => {
-        this.errorMessage = 'Could not load notification settings.';
+        this.errorMessage = 'Não foi possível carregar as configurações de notificação.';
         return of(null);
       }),
       finalize(() => {
@@ -102,7 +102,7 @@ export class Notifications implements OnInit {
         )
       ),
       catchError(() => {
-        this.snackBar.open('Could not save notification settings.', 'Close', {
+        this.snackBar.open('Não foi possível salvar as configurações de notificação.', 'Fechar', {
           duration: 4000,
           panelClass: ['snackbar-error'],
         });
@@ -121,7 +121,7 @@ export class Notifications implements OnInit {
 
       this.view = result;
       this.formData = this.toFormData(result.preferences);
-      this.snackBar.open('Notification settings saved.', 'Close', {
+      this.snackBar.open('Configurações de notificação salvas.', 'Fechar', {
         duration: 3000,
         panelClass: ['snackbar-success'],
       });
@@ -131,7 +131,7 @@ export class Notifications implements OnInit {
 
   formatTime(value?: string | null): string {
     if (!value) {
-      return 'Not set';
+      return 'Não definido';
     }
 
     return value.slice(0, 5);
@@ -139,7 +139,7 @@ export class Notifications implements OnInit {
 
   getNextReminderLabel(dashboard: ReminderDashboard): string {
     if (!dashboard.nextReminder) {
-      return 'No reminder scheduled';
+      return 'Nenhum lembrete programado';
     }
 
     return `${this.formatTime(dashboard.nextReminder.reminderTime)} · ${dashboard.nextReminder.title}`;

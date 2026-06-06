@@ -50,12 +50,12 @@ describe('Habits', () => {
     reminderTimezone: 'America/Sao_Paulo',
     reminderMessage: null,
     reminderType: 'Standard',
-    recurrenceLabel: 'Every day',
+    recurrenceLabel: 'Todos os dias',
     recurrence: {
       type: 'EveryDay',
       config: null,
       reminderTime: null,
-      label: 'Every day',
+      label: 'Todos os dias',
     },
     isArchived: false,
     isDueToday: true,
@@ -181,8 +181,8 @@ describe('Habits', () => {
 
     expect(card).toBeTruthy();
     expect(card.textContent).toContain(baseHabit.title);
-    expect(card.textContent).toContain('5 day streak');
-    expect(card.textContent).toContain('Every day');
+    expect(card.textContent).toContain('Sequência de 5 dias');
+    expect(card.textContent).toContain('Todos os dias');
     expect(weekIndicators.length).toBe(7);
   });
 
@@ -202,7 +202,7 @@ describe('Habits', () => {
     fixture.detectChanges();
 
     expect(view().querySelector('[data-testid="habits-empty-state"]')).toBeTruthy();
-    expect(view().textContent).toContain('No habits yet');
+    expect(view().textContent).toContain('Nenhum hábito ainda');
   });
 
   it('toggles today when a habit card is clicked', () => {
@@ -221,10 +221,10 @@ describe('Habits', () => {
     fixture.detectChanges();
 
     expect(view().textContent).toContain('1/2');
-    expect(view().textContent).toContain('50% complete');
+    expect(view().textContent).toContain('50% concluído');
     expect(view().textContent).toContain('72%');
     expect(view().textContent).toContain('41');
-    expect(view().textContent).toContain('best 11 days');
+    expect(view().textContent).toContain('melhor: 11 dias');
   });
 
   it('renders subtle reminder visibility when reminder data is available', () => {
@@ -236,16 +236,16 @@ describe('Habits', () => {
       },
       habitsAtRisk: [
         {
-          message: 'Your 5-day streak is still alive. Complete Beber água pela manhã today.',
+          message: 'Sua sequência de 5 dias ainda está ativa. Conclua Beber água pela manhã hoje.',
         },
       ],
-      smartMotivations: ['You completed 80% of your habits last week.'],
+      smartMotivations: ['Você concluiu 80% dos seus hábitos na semana passada.'],
     });
     fixture.detectChanges();
 
-    expect(view().textContent).toContain('Next reminder');
+    expect(view().textContent).toContain('Próximo lembrete');
     expect(view().textContent).toContain('09:00 · Beber água pela manhã');
-    expect(view().textContent).toContain('Smart nudge');
+    expect(view().textContent).toContain('Incentivo inteligente');
   });
 
   it('shows a rollback error snackbar when completion toggle fails', () => {
@@ -259,8 +259,8 @@ describe('Habits', () => {
     card.click();
 
     expect(snackBarMock.open).toHaveBeenCalledWith(
-      'Could not update this habit. Your progress was restored.',
-      'Close',
+      'Não foi possível atualizar este hábito. Seu progresso foi restaurado.',
+      'Fechar',
       expect.objectContaining({ panelClass: ['snackbar-error'] }),
     );
   });

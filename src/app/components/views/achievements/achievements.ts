@@ -59,7 +59,7 @@ export class Achievements implements OnInit {
       }),
       map((result) => result ? this.createViewModel(result) : null),
       catchError(() => {
-        this.errorMessage = 'Could not load achievements right now.';
+        this.errorMessage = 'Não foi possível carregar as conquistas agora.';
         return of(null);
       }),
       finalize(() => {

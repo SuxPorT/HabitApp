@@ -2,57 +2,57 @@
   @if (loading) {
     <section class="streaks-loading" data-testid="streaks-loading" aria-live="polite">
       <span class="spinner-border" aria-hidden="true"></span>
-      <span>Checking streaks...</span>
+      <span>Verificando sequências...</span>
     </section>
   } @else if (errorMessage) {
     <section class="empty-state" data-testid="streaks-error">
       <span class="material-icons empty-state__icon" aria-hidden="true">local_fire_department</span>
-      <h1>Streaks are unavailable</h1>
+      <h1>Sequências indisponíveis</h1>
       <p>{{ errorMessage }}</p>
       <button type="button" class="btn streaks-secondary" (click)="loadStreaks()">
         <span class="material-icons" aria-hidden="true">refresh</span>
-        <span>Try again</span>
+        <span>Tentar novamente</span>
       </button>
     </section>
   } @else if (streakCenter; as view) {
     <section class="streaks-hero" aria-labelledby="streaks-title">
       <div>
-        <p class="section-kicker">Streak Center</p>
-        <h1 id="streaks-title">Keep the chain alive.</h1>
-        <p>Live streaks, risks and consistency are calculated from scheduled habit days.</p>
+        <p class="section-kicker">Central de sequências</p>
+        <h1 id="streaks-title">Mantenha a sequência ativa.</h1>
+        <p>Sequências ativas, riscos e consistência são calculados a partir dos dias programados dos hábitos.</p>
       </div>
-      <div class="score-orbit" aria-label="Consistency score">
+      <div class="score-orbit" aria-label="Pontuação de consistência">
         <span>{{ view.consistencyScore }}</span>
-        <small>consistency score</small>
+        <small>pontuação de consistência</small>
       </div>
     </section>
 
     @if (!hasStreakData(view)) {
       <section class="empty-state" data-testid="streaks-empty-state">
         <span class="material-icons empty-state__icon" aria-hidden="true">local_fire_department</span>
-        <h2>Complete a scheduled habit to start a streak.</h2>
-        <p>Your streak center will fill in as soon as your habits have history.</p>
+        <h2>Conclua um hábito programado para iniciar uma sequência.</h2>
+        <p>A central de sequências será preenchida assim que seus hábitos tiverem histórico.</p>
       </section>
     } @else {
-      <section class="streak-overview" aria-label="Overall streaks">
+      <section class="streak-overview" aria-label="Sequências gerais">
         <article class="metric-card">
-          <span class="metric-card__label">Current overall streak</span>
+          <span class="metric-card__label">Sequência geral atual</span>
           <strong>{{ view.currentOverallStreak }}</strong>
-          <small>scheduled days protected</small>
+          <small>dias programados protegidos</small>
         </article>
         <article class="metric-card">
-          <span class="metric-card__label">Longest overall streak</span>
+          <span class="metric-card__label">Maior sequência geral</span>
           <strong>{{ view.longestOverallStreak }}</strong>
-          <small>best run</small>
+          <small>melhor período</small>
         </article>
         <article class="metric-card">
-          <span class="metric-card__label">Habits at risk</span>
+          <span class="metric-card__label">Hábitos em risco</span>
           <strong>{{ view.habitsAtRisk.length }}</strong>
-          <small>need attention</small>
+          <small>precisam de atenção</small>
         </article>
       </section>
 
-      <section class="streak-message-grid" aria-label="Motivational insights">
+      <section class="streak-message-grid" aria-label="Análises motivacionais">
         @for (message of view.motivationalInsights; track message) {
           <article class="streak-message">
             <span class="material-icons" aria-hidden="true">tips_and_updates</span>
@@ -64,8 +64,8 @@
       <section class="risk-section" aria-labelledby="risk-title">
         <div class="section-heading">
           <div>
-            <p class="section-kicker">Habits at risk</p>
-            <h2 id="risk-title">Protect these next</h2>
+            <p class="section-kicker">Hábitos em risco</p>
+            <h2 id="risk-title">Proteja estes a seguir</h2>
           </div>
         </div>
 
@@ -83,17 +83,17 @@
                 </span>
               </div>
               <div class="risk-card__meta">
-                <span>{{ habit.currentStreak }} day streak</span>
-                <span>{{ habit.missedScheduledDatesCount }} missed this week</span>
-                <span>Next {{ formatDate(habit.nextScheduledDate) }}</span>
+                <span>Sequência de {{ habit.currentStreak }} dias</span>
+                <span>{{ habit.missedScheduledDatesCount }} não concluídos nesta semana</span>
+                <span>Próximo: {{ formatDate(habit.nextScheduledDate) }}</span>
               </div>
             </article>
           } @empty {
             <article class="safe-card" data-testid="streaks-safe-state">
               <span class="material-icons" aria-hidden="true">verified</span>
               <div>
-                <h3>No habits at risk</h3>
-                <p>Your scheduled habits are protected right now.</p>
+                <h3>Nenhum hábito em risco</h3>
+                <p>Seus hábitos programados estão protegidos agora.</p>
               </div>
             </article>
           }
@@ -103,8 +103,8 @@
       <section class="streak-list-section" aria-labelledby="habit-streak-title">
         <div class="section-heading">
           <div>
-            <p class="section-kicker">Habit streaks</p>
-            <h2 id="habit-streak-title">Every streak in motion</h2>
+            <p class="section-kicker">Sequências dos hábitos</p>
+            <h2 id="habit-streak-title">Todas as sequências em andamento</h2>
           </div>
         </div>
 
@@ -126,7 +126,7 @@
               <div class="habit-streak-card__stats">
                 <span class="status-pill">{{ getStatusLabel(habit) }}</span>
                 <strong>{{ habit.currentStreak }}</strong>
-                <span>best {{ habit.longestStreak }}</span>
+                <span>melhor: {{ habit.longestStreak }}</span>
                 <span>{{ habit.completionRate }}%</span>
               </div>
             </article>

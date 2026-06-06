@@ -30,7 +30,7 @@ describe('Recurrences', () => {
   beforeEach(async () => {
     habitServiceMock = {
       getHabitsByUser: vi.fn(() => of(habits)),
-      getRecurrenceLabel: vi.fn((type: string) => type === 'Daily' ? 'Every day' : 'Mon, Fri'),
+      getRecurrenceLabel: vi.fn((type: string) => type === 'Daily' ? 'Todos os dias' : 'Seg, Sex'),
       buildRecurrenceConfig: vi.fn((type: string, days: string[], interval: number, monthlyDay: number) => {
         if (type === 'EveryXDays') return JSON.stringify({ interval });
         if (type === 'Monthly') return JSON.stringify({ dayOfMonth: monthlyDay });
@@ -71,8 +71,8 @@ describe('Recurrences', () => {
     const cards = view().querySelectorAll('[data-testid="recurrence-pattern-card"]');
 
     expect(cards.length).toBe(2);
-    expect(view().textContent).toContain('Every day');
-    expect(view().textContent).toContain('Mon, Fri');
+    expect(view().textContent).toContain('Todos os dias');
+    expect(view().textContent).toContain('Seg, Sex');
     expect(view().textContent).toContain('Run');
     expect(view().textContent).toContain('Journal');
   });

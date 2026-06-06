@@ -4,14 +4,14 @@
   <aside
     class="sidebar-shell"
     [class.sidebar-shell--collapsed]="isSidebarCollapsed"
-    aria-label="Primary navigation"
+    aria-label="Navegação principal"
   >
     <div class="sidebar-brand">
       <button
         type="button"
         class="sidebar-toggle"
         (click)="toggleSidebar()"
-        [attr.aria-label]="isSidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'"
+        [attr.aria-label]="isSidebarCollapsed ? 'Expandir barra lateral' : 'Recolher barra lateral'"
         [attr.aria-expanded]="!isSidebarCollapsed"
       >
         <span class="material-icons" aria-hidden="true">
@@ -20,7 +20,7 @@
       </button>
     </div>
 
-    <nav class="sidebar-nav" aria-label="Primary">
+    <nav class="sidebar-nav" aria-label="Principal">
       @for (item of navigationItems; track item.link) {
         <a
           [routerLink]="item.link"
@@ -41,15 +41,15 @@
         type="button"
         class="sidebar-utility"
         (click)="toggleTheme()"
-        [attr.aria-label]="resolvedTheme === 'dark' ? 'Use light theme' : 'Use dark theme'"
+        [attr.aria-label]="resolvedTheme === 'dark' ? 'Usar tema claro' : 'Usar tema escuro'"
         [attr.aria-pressed]="resolvedTheme === 'dark'"
-        [title]="isSidebarCollapsed ? (resolvedTheme === 'dark' ? 'Light theme' : 'Dark theme') : null"
+        [title]="isSidebarCollapsed ? (resolvedTheme === 'dark' ? 'Tema claro' : 'Tema escuro') : null"
       >
         <span class="material-icons sidebar-utility__icon" aria-hidden="true">
           {{ resolvedTheme === 'dark' ? 'dark_mode' : 'light_mode' }}
         </span>
         <span class="sidebar-utility__label">
-          {{ resolvedTheme === 'dark' ? 'Dark mode' : 'Light mode' }}
+          {{ resolvedTheme === 'dark' ? 'Modo escuro' : 'Modo claro' }}
         </span>
       </button>
     </div>
@@ -60,13 +60,13 @@
     [class.header-container--collapsed]="isSidebarCollapsed"
   >
     <div class="container header-inner">
-      <a routerLink="/habits" class="brand-lockup" aria-label="HabitApp dashboard">
+      <a routerLink="/habits" class="brand-lockup" aria-label="Painel de hábitos">
         <span class="brand-mark" aria-hidden="true">
           <img src="app-logo.svg" alt="" class="brand-logo" />
         </span>
         <span class="brand-copy">
-          <span class="brand-kicker">HabitApp</span>
-          <span class="sidebar-title">Habits</span>
+          <span class="brand-kicker">Hábitos</span>
+          <span class="sidebar-title">Hábitos</span>
         </span>
       </a>
 
@@ -77,7 +77,7 @@
             type="button"
             class="btn-avatar"
             [matMenuTriggerFor]="profileMenu"
-            [attr.aria-label]="'Open profile menu for ' + user.name"
+            [attr.aria-label]="'Abrir menu do perfil de ' + user.name"
           >
             <span class="profile-avatar__initial" aria-hidden="true">{{
               user.name.charAt(0) | uppercase
@@ -96,11 +96,11 @@
         >
           <button mat-menu-item (click)="openEditUserDialog(user)">
             <span class="material-icons menu-icon" aria-hidden="true">manage_accounts</span>
-            <span>Update Profile</span>
+            <span>Atualizar perfil</span>
           </button>
           <button mat-menu-item class="menu-danger" (click)="logout()">
             <span class="material-icons menu-icon" aria-hidden="true">logout</span>
-            <span>Sign Out</span>
+            <span>Sair</span>
           </button>
         </mat-menu>
       </div>

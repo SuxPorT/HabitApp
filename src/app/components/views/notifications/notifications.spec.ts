@@ -42,16 +42,16 @@ describe('Notifications', () => {
     preferences,
     nextReminder: {
       habitId: 1,
-      title: 'Reading',
+      title: 'Leitura',
       icon: '📚',
       color: '',
-      category: 'Mind',
+      category: 'Mente',
       scheduledDate: '2026-06-05',
       reminderTime: '09:00:00',
       scheduledAt: '2026-06-05T09:00:00',
       timezone: 'America/Sao_Paulo',
       reminderType: 'Standard',
-      message: 'Time for Reading.',
+      message: 'Hora de Leitura.',
       isCompleted: false,
       isSuppressedByQuietHours: false,
     },
@@ -60,18 +60,18 @@ describe('Notifications', () => {
     habitsAtRisk: [
       {
         habitId: 1,
-        title: 'Reading',
+        title: 'Leitura',
         icon: '📚',
         color: '',
-        category: 'Mind',
+        category: 'Mente',
         currentStreak: 4,
         longestStreak: 7,
         daysUntilPersonalRecord: 3,
         riskLevel: 'medium',
-        message: 'Your 4-day streak is still alive.',
+        message: 'Sua sequência de 4 dias ainda está ativa.',
       },
     ],
-    smartMotivations: ['You completed 92% of your habits last week.'],
+    smartMotivations: ['Você concluiu 92% dos seus hábitos na semana passada.'],
     payloads: [],
   };
 
@@ -118,11 +118,11 @@ describe('Notifications', () => {
     fixture = TestBed.createComponent(Notifications);
     fixture.detectChanges();
 
-    expect(view().textContent).toContain('Stay consistent without extra noise.');
-    expect(view().textContent).toContain('Enable notifications');
-    expect(view().textContent).toContain('Default reminder style');
-    expect(view().textContent).toContain('09:00 · Reading');
-    expect(view().textContent).toContain('You completed 92% of your habits last week.');
+    expect(view().textContent).toContain('Mantenha a consistência sem ruído extra.');
+    expect(view().textContent).toContain('Ativar notificações');
+    expect(view().textContent).toContain('Estilo padrão do lembrete');
+    expect(view().textContent).toContain('09:00 · Leitura');
+    expect(view().textContent).toContain('Você concluiu 92% dos seus hábitos na semana passada.');
   });
 
   it('saves normalized notification preferences', () => {
@@ -178,6 +178,6 @@ describe('Notifications', () => {
     expect(fixture.componentInstance.loading).toBe(false);
     expect(fixture.componentInstance.view?.dashboard).toEqual(dashboard);
     expect(view().querySelector('[data-testid="notifications-loading"]')).toBeFalsy();
-    expect(view().textContent).toContain('Stay consistent without extra noise.');
+    expect(view().textContent).toContain('Mantenha a consistência sem ruído extra.');
   });
 });

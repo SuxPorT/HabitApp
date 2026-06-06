@@ -21,30 +21,30 @@ export class HabitDialog implements OnInit {
   };
 
   recurrenceOptions = [
-    { value: 'Daily', label: 'Every day' },
-    { value: 'Weekdays', label: 'Weekdays' },
-    { value: 'Weekends', label: 'Weekends' },
-    { value: 'SpecificDaysOfWeek', label: 'Specific weekdays' },
-    { value: 'EveryXDays', label: 'Every X days' },
-    { value: 'Monthly', label: 'Monthly' },
+    { value: 'Daily', label: 'Todos os dias' },
+    { value: 'Weekdays', label: 'Dias úteis' },
+    { value: 'Weekends', label: 'Fins de semana' },
+    { value: 'SpecificDaysOfWeek', label: 'Dias específicos da semana' },
+    { value: 'EveryXDays', label: 'A cada X dias' },
+    { value: 'Monthly', label: 'Mensal' },
   ];
   weekDays = [
-    { value: 'Monday', label: 'Mon' },
-    { value: 'Tuesday', label: 'Tue' },
-    { value: 'Wednesday', label: 'Wed' },
-    { value: 'Thursday', label: 'Thu' },
-    { value: 'Friday', label: 'Fri' },
-    { value: 'Saturday', label: 'Sat' },
-    { value: 'Sunday', label: 'Sun' },
+    { value: 'Monday', label: 'Seg' },
+    { value: 'Tuesday', label: 'Ter' },
+    { value: 'Wednesday', label: 'Qua' },
+    { value: 'Thursday', label: 'Qui' },
+    { value: 'Friday', label: 'Sex' },
+    { value: 'Saturday', label: 'Sáb' },
+    { value: 'Sunday', label: 'Dom' },
   ];
   selectedWeekDays: string[] = [];
   intervalDays = 2;
   monthlyDay = 1;
   reminderTypes = [
-    { value: 'Standard', label: 'Standard' },
-    { value: 'StreakProtection', label: 'Streak protection' },
-    { value: 'Motivation', label: 'Motivation' },
-    { value: 'Custom', label: 'Custom' },
+    { value: 'Standard', label: 'Padrão' },
+    { value: 'StreakProtection', label: 'Proteção de sequência' },
+    { value: 'Motivation', label: 'Motivação' },
+    { value: 'Custom', label: 'Personalizado' },
   ];
 
   iconSuggestions: string[] = [

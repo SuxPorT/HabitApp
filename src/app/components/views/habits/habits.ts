@@ -128,7 +128,7 @@ export class Habits implements OnInit {
     this.habitService.toggleCompletion(habit.id).subscribe({
       next: () => this.triggerReminderRefresh(),
       error: () => {
-        this.snackBar.open('Could not update this habit. Your progress was restored.', 'Close', {
+        this.snackBar.open('Não foi possível atualizar este hábito. Seu progresso foi restaurado.', 'Fechar', {
           duration: 4000,
           horizontalPosition: 'center',
           verticalPosition: 'bottom',
@@ -145,9 +145,9 @@ export class Habits implements OnInit {
       width: '400px',
       panelClass: 'custom-dialog-container',
       data: {
-        title: 'Delete Habit',
-        message: `Delete <strong>"${habit.title}"</strong>?<br />This action cannot be undone.`,
-        confirmBtnText: 'Delete'
+        title: 'Excluir hábito',
+        message: `Excluir <strong>"${habit.title}"</strong>?<br />Esta ação não pode ser desfeita.`,
+        confirmBtnText: 'Excluir'
       }
     });
 
@@ -167,7 +167,7 @@ export class Habits implements OnInit {
   }
 
   getWeekdayLabel(dayOfWeek: string): string {
-    return dayOfWeek.slice(0, 1);
+    return this.translateWeekday(dayOfWeek).slice(0, 3);
   }
 
   isDashboardDate(indicatorDate: string, dashboardDate: string): boolean {
@@ -224,35 +224,49 @@ export class Habits implements OnInit {
 
   private getMotivationalMessage(activeHabits: number, completedToday: number): string {
     if (!activeHabits) {
-      return 'Create your first habit and start a fresh streak today.';
+      return 'Crie seu primeiro hábito e comece uma nova sequência hoje.';
     }
 
     if (completedToday === activeHabits) {
-      return 'Perfect day. Your streak is protected.';
+      return 'Dia perfeito. Sua sequência está protegida.';
     }
 
     if (!completedToday) {
-      return 'Start with one small win. Tap any habit to complete it.';
+      return 'Comece com uma pequena vitória. Toque em qualquer hábito para concluir.';
     }
 
     const remaining = activeHabits - completedToday;
-    const label = remaining === 1 ? 'habit' : 'habits';
+    const label = remaining === 1 ? 'hábito' : 'hábitos';
 
-    return `${remaining} ${label} left for a perfect day.`;
+    return `${remaining} ${label} restantes para um dia perfeito.`;
   }
 
   private buildGreeting(date: Date): string {
     const hour = date.getHours();
 
     if (hour < 12) {
-      return 'Good Morning';
+      return 'Bom dia';
     }
 
     if (hour < 18) {
-      return 'Good Afternoon';
+      return 'Boa tarde';
     }
 
-    return 'Good Evening';
+    return 'Boa noite';
+  }
+
+  private translateWeekday(dayOfWeek: string): string {
+    const labels: Record<string, string> = {
+      Sunday: 'Domingo',
+      Monday: 'Segunda',
+      Tuesday: 'Terça',
+      Wednesday: 'Quarta',
+      Thursday: 'Quinta',
+      Friday: 'Sexta',
+      Saturday: 'Sábado',
+    };
+
+    return labels[dayOfWeek] ?? dayOfWeek;
   }
 
   private triggerRefresh(): void {

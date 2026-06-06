@@ -21,51 +21,51 @@ describe('Streaks', () => {
     habitsAtRisk: [
       {
         habitId: 2,
-        title: 'Workout',
+        title: 'Treino',
         icon: '🏋️',
         color: '',
-        category: 'Health',
+        category: 'Saúde',
         currentStreak: 0,
         lastCompletedDate: '2026-06-04',
         nextScheduledDate: '2026-06-05',
         missedScheduledDatesCount: 1,
         riskLevel: 'high',
-        message: 'Workout is scheduled today and still open.',
+        message: 'Treino está programado para hoje e ainda está aberto.',
       },
     ],
     habitStreaks: [
       {
         habitId: 1,
-        title: 'Reading',
+        title: 'Leitura',
         icon: '📖',
         color: '',
-        category: 'Mind',
+        category: 'Mente',
         currentStreak: 8,
         longestStreak: 12,
         completionRate: 93,
         totalCompletions: 18,
         lastCompletedDate: '2026-06-05',
         status: 'protected',
-        message: 'Reading is protected today.',
+        message: 'Leitura está protegida hoje.',
       },
       {
         habitId: 2,
-        title: 'Workout',
+        title: 'Treino',
         icon: '🏋️',
         color: '',
-        category: 'Health',
+        category: 'Saúde',
         currentStreak: 0,
         longestStreak: 4,
         completionRate: 55,
         totalCompletions: 6,
         lastCompletedDate: '2026-06-04',
         status: 'at-risk',
-        message: 'Workout is scheduled today and still open.',
+        message: 'Treino está programado para hoje e ainda está aberto.',
       },
     ],
     motivationalInsights: [
-      'You are on a 4-day overall streak.',
-      'Workout needs attention today.',
+      'Você está em uma sequência geral de 4 dias.',
+      'Treino precisa de atenção hoje.',
     ],
   };
 
@@ -104,9 +104,9 @@ describe('Streaks', () => {
     fixture = TestBed.createComponent(Streaks);
     fixture.detectChanges();
 
-    expect(view().textContent).toContain('Keep the chain alive.');
+    expect(view().textContent).toContain('Mantenha a sequência ativa.');
     expect(view().textContent).toContain('82');
-    expect(view().textContent).toContain('Workout is scheduled today and still open.');
+    expect(view().textContent).toContain('Treino está programado para hoje e ainda está aberto.');
     expect(view().querySelectorAll('[data-testid="habit-risk-card"]').length).toBe(1);
     expect(view().querySelectorAll('[data-testid="habit-streak-card"]').length).toBe(2);
   });
@@ -141,7 +141,7 @@ describe('Streaks', () => {
     expect(fixture.componentInstance.loading).toBe(false);
     expect(fixture.componentInstance.streakCenter).toEqual(streakCenter);
     expect(view().querySelector('[data-testid="streaks-loading"]')).toBeFalsy();
-    expect(view().textContent).toContain('Keep the chain alive.');
+    expect(view().textContent).toContain('Mantenha a sequência ativa.');
   });
 
   it('shows an empty state when no habit streaks exist', () => {
@@ -151,13 +151,13 @@ describe('Streaks', () => {
       longestOverallStreak: 0,
       habitsAtRisk: [],
       habitStreaks: [],
-      motivationalInsights: ['Complete a scheduled habit to begin a new streak.'],
+      motivationalInsights: ['Conclua um hábito programado para iniciar uma nova sequência.'],
     }));
 
     fixture = TestBed.createComponent(Streaks);
     fixture.detectChanges();
 
     expect(view().querySelector('[data-testid="streaks-empty-state"]')).toBeTruthy();
-    expect(view().textContent).toContain('Complete a scheduled habit to start a streak.');
+    expect(view().textContent).toContain('Conclua um hábito programado para iniciar uma sequência.');
   });
 });

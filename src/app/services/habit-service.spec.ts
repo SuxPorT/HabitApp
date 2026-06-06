@@ -90,7 +90,7 @@ describe('HabitService', () => {
     request.flush(apiDashboard);
 
     expect(response?.activeHabits[0].isCompletedToday).toBe(false);
-    expect(response?.activeHabits[0].recurrenceLabel).toBe('Every day');
+    expect(response?.activeHabits[0].recurrenceLabel).toBe('Todos os dias');
     expect(currentDashboard()?.dailyProgress.completedToday).toBe(0);
   });
 

@@ -27,12 +27,12 @@ export class Header implements OnInit, OnDestroy {
   readonly themeMode$: Observable<ThemeMode>;
   readonly resolvedTheme$: Observable<ResolvedTheme>;
   readonly navigationItems: NavigationItem[] = [
-    { label: 'Dashboard', icon: 'space_dashboard', link: '/habits' },
-    { label: 'Insights', icon: 'insights', link: '/insights' },
-    { label: 'Streaks', icon: 'local_fire_department', link: '/streaks' },
-    { label: 'Achievements', icon: 'emoji_events', link: '/achievements' },
-    { label: 'Recurrences', icon: 'repeat', link: '/recurrences' },
-    { label: 'Notifications', icon: 'notifications', link: '/notifications' },
+    { label: 'Painel', icon: 'space_dashboard', link: '/habits' },
+    { label: 'Análises', icon: 'insights', link: '/insights' },
+    { label: 'Sequências', icon: 'local_fire_department', link: '/streaks' },
+    { label: 'Conquistas', icon: 'emoji_events', link: '/achievements' },
+    { label: 'Recorrências', icon: 'repeat', link: '/recurrences' },
+    { label: 'Notificações', icon: 'notifications', link: '/notifications' },
   ];
   private isAuthenticated = false;
   private sidebarWasToggled = false;
@@ -99,9 +99,9 @@ export class Header implements OnInit, OnDestroy {
       width: '400px',
       panelClass: 'custom-dialog-container',
       data: {
-        title: 'Sign out',
-        message: 'Do you want to sign out of your account?',
-        confirmBtnText: 'Sign out',
+        title: 'Sair',
+        message: 'Deseja sair da sua conta?',
+        confirmBtnText: 'Sair',
       },
     });
 
