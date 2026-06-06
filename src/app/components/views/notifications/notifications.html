@@ -1,0 +1,226 @@
+<div class="container notifications-shell">
+  @if (loading) {
+    <section class="notifications-loading" data-testid="notifications-loading" aria-live="polite">
+      <span class="spinner-border" aria-hidden="true"></span>
+      <span>Loading notification settings...</span>
+    </section>
+  } @else if (errorMessage) {
+    <section class="empty-state" data-testid="notifications-error">
+      <span class="material-icons empty-state__icon" aria-hidden="true">notifications</span>
+      <h1>Notifications are unavailable</h1>
+      <p>{{ errorMessage }}</p>
+      <button type="button" class="btn notifications-secondary" (click)="loadSettings()">
+        <span class="material-icons" aria-hidden="true">refresh</span>
+        <span>Try again</span>
+      </button>
+    </section>
+  } @else if (view; as notificationView) {
+    <section class="notifications-hero" aria-labelledby="notifications-title">
+      <div>
+        <p class="section-kicker">Notifications</p>
+        <h1 id="notifications-title">Stay consistent without extra noise.</h1>
+        <p>Reminder timing, quiet hours and motivation are generated from your real schedule.</p>
+      </div>
+      <div class="next-reminder-pill" aria-label="Next reminder">
+        <span class="material-icons" aria-hidden="true">schedule</span>
+        <span>{{ getNextReminderLabel(notificationView.dashboard) }}</span>
+      </div>
+    </section>
+
+    <form class="settings-layout" #settingsForm="ngForm" (ngSubmit)="saveSettings()">
+      <section class="settings-panel" aria-labelledby="general-settings-title">
+        <div class="settings-panel__header">
+          <div>
+            <p class="section-kicker">General</p>
+            <h2 id="general-settings-title">Delivery rules</h2>
+          </div>
+          <span class="material-icons" aria-hidden="true">tune</span>
+        </div>
+
+        <label class="toggle-row">
+          <span>
+            <strong>Enable notifications</strong>
+            <small>Allow HabitApp to generate reminder payloads.</small>
+          </span>
+          <input
+            type="checkbox"
+            name="notificationsEnabled"
+            [(ngModel)]="formData.notificationsEnabled"
+          />
+        </label>
+
+        <div class="time-grid">
+          <label class="time-field" for="quiet-start">
+            <span>Quiet hours start</span>
+            <input
+              id="quiet-start"
+              type="time"
+              class="form-control theme-input"
+              name="quietHoursStart"
+              [(ngModel)]="formData.quietHoursStart"
+            />
+          </label>
+
+          <label class="time-field" for="quiet-end">
+            <span>Quiet hours end</span>
+            <input
+              id="quiet-end"
+              type="time"
+              class="form-control theme-input"
+              name="quietHoursEnd"
+              [(ngModel)]="formData.quietHoursEnd"
+            />
+          </label>
+        </div>
+
+        <label class="toggle-row">
+          <span>
+            <strong>Reminder sound</strong>
+            <small>Include sound metadata for future delivery channels.</small>
+          </span>
+          <input
+            type="checkbox"
+            name="reminderSoundEnabled"
+            [(ngModel)]="formData.reminderSoundEnabled"
+          />
+        </label>
+      </section>
+
+      <section class="settings-panel" aria-labelledby="reminder-settings-title">
+        <div class="settings-panel__header">
+          <div>
+            <p class="section-kicker">Reminders</p>
+            <h2 id="reminder-settings-title">Default reminder style</h2>
+          </div>
+          <span class="material-icons" aria-hidden="true">alarm</span>
+        </div>
+
+        <div class="time-grid">
+          <label class="time-field" for="default-reminder-time">
+            <span>Reminder time</span>
+            <input
+              id="default-reminder-time"
+              type="time"
+              class="form-control theme-input"
+              name="defaultReminderTime"
+              [(ngModel)]="formData.defaultReminderTime"
+            />
+          </label>
+
+          <label class="time-field" for="default-reminder-type">
+            <span>Reminder type</span>
+            <select
+              id="default-reminder-type"
+              class="form-select theme-input"
+              name="defaultReminderType"
+              [(ngModel)]="formData.defaultReminderType"
+            >
+              <option *ngFor="let option of reminderTypes" [value]="option.value">
+                {{ option.label }}
+              </option>
+            </select>
+          </label>
+        </div>
+      </section>
+
+      <section class="settings-panel" aria-labelledby="motivation-settings-title">
+        <div class="settings-panel__header">
+          <div>
+            <p class="section-kicker">Motivation</p>
+            <h2 id="motivation-settings-title">Smart nudges</h2>
+          </div>
+          <span class="material-icons" aria-hidden="true">tips_and_updates</span>
+        </div>
+
+        <label class="toggle-row">
+          <span>
+            <strong>Achievement notifications</strong>
+            <small>Prepare achievement payloads when milestones are reached.</small>
+          </span>
+          <input
+            type="checkbox"
+            name="achievementNotificationsEnabled"
+            [(ngModel)]="formData.achievementNotificationsEnabled"
+          />
+        </label>
+
+        <label class="toggle-row">
+          <span>
+            <strong>Streak protection notifications</strong>
+            <small>Prioritize reminders when a live streak is at risk.</small>
+          </span>
+          <input
+            type="checkbox"
+            name="streakRiskNotificationsEnabled"
+            [(ngModel)]="formData.streakRiskNotificationsEnabled"
+          />
+        </label>
+
+        <label class="toggle-row">
+          <span>
+            <strong>Motivational messages</strong>
+            <small>Use analytics to generate occasional encouragement.</small>
+          </span>
+          <input
+            type="checkbox"
+            name="motivationalNotificationsEnabled"
+            [(ngModel)]="formData.motivationalNotificationsEnabled"
+          />
+        </label>
+      </section>
+
+      <section class="preview-panel" aria-label="Reminder preview">
+        <div class="preview-panel__header">
+          <div>
+            <p class="section-kicker">Preview</p>
+            <h2>Today’s reminder state</h2>
+          </div>
+          <span>{{ notificationView.dashboard.payloads.length }} payloads</span>
+        </div>
+
+        <div class="preview-stat-grid">
+          <article>
+            <span>Upcoming</span>
+            <strong>{{ notificationView.dashboard.upcomingReminders.length }}</strong>
+          </article>
+          <article>
+            <span>Attention</span>
+            <strong>{{ notificationView.dashboard.habitsAtRisk.length }}</strong>
+          </article>
+          <article>
+            <span>Missed</span>
+            <strong>{{ notificationView.dashboard.missedHabits.length }}</strong>
+          </article>
+        </div>
+
+        <div class="motivation-list">
+          @for (message of notificationView.dashboard.smartMotivations; track message) {
+            <p>
+              <span class="material-icons" aria-hidden="true">auto_awesome</span>
+              <span>{{ message }}</span>
+            </p>
+          } @empty {
+            <p>
+              <span class="material-icons" aria-hidden="true">notifications_none</span>
+              <span>Complete more scheduled habits to unlock smarter reminders.</span>
+            </p>
+          }
+        </div>
+      </section>
+
+      <div class="settings-actions">
+        <button type="button" class="btn notifications-secondary" (click)="loadSettings()">
+          Reset
+        </button>
+        <button
+          type="submit"
+          class="btn notifications-primary"
+          data-testid="notification-save-button"
+          [disabled]="saving"
+        >
+          {{ saving ? 'Saving...' : 'Save settings' }}
+        </button>
+      </div>
+    </form>
+  }
+</div>

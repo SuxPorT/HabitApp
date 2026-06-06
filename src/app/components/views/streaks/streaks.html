@@ -1,0 +1,138 @@
+<div class="container streaks-shell">
+  @if (loading) {
+    <section class="streaks-loading" data-testid="streaks-loading" aria-live="polite">
+      <span class="spinner-border" aria-hidden="true"></span>
+      <span>Checking streaks...</span>
+    </section>
+  } @else if (errorMessage) {
+    <section class="empty-state" data-testid="streaks-error">
+      <span class="material-icons empty-state__icon" aria-hidden="true">local_fire_department</span>
+      <h1>Streaks are unavailable</h1>
+      <p>{{ errorMessage }}</p>
+      <button type="button" class="btn streaks-secondary" (click)="loadStreaks()">
+        <span class="material-icons" aria-hidden="true">refresh</span>
+        <span>Try again</span>
+      </button>
+    </section>
+  } @else if (streakCenter; as view) {
+    <section class="streaks-hero" aria-labelledby="streaks-title">
+      <div>
+        <p class="section-kicker">Streak Center</p>
+        <h1 id="streaks-title">Keep the chain alive.</h1>
+        <p>Live streaks, risks and consistency are calculated from scheduled habit days.</p>
+      </div>
+      <div class="score-orbit" aria-label="Consistency score">
+        <span>{{ view.consistencyScore }}</span>
+        <small>consistency score</small>
+      </div>
+    </section>
+
+    @if (!hasStreakData(view)) {
+      <section class="empty-state" data-testid="streaks-empty-state">
+        <span class="material-icons empty-state__icon" aria-hidden="true">local_fire_department</span>
+        <h2>Complete a scheduled habit to start a streak.</h2>
+        <p>Your streak center will fill in as soon as your habits have history.</p>
+      </section>
+    } @else {
+      <section class="streak-overview" aria-label="Overall streaks">
+        <article class="metric-card">
+          <span class="metric-card__label">Current overall streak</span>
+          <strong>{{ view.currentOverallStreak }}</strong>
+          <small>scheduled days protected</small>
+        </article>
+        <article class="metric-card">
+          <span class="metric-card__label">Longest overall streak</span>
+          <strong>{{ view.longestOverallStreak }}</strong>
+          <small>best run</small>
+        </article>
+        <article class="metric-card">
+          <span class="metric-card__label">Habits at risk</span>
+          <strong>{{ view.habitsAtRisk.length }}</strong>
+          <small>need attention</small>
+        </article>
+      </section>
+
+      <section class="streak-message-grid" aria-label="Motivational insights">
+        @for (message of view.motivationalInsights; track message) {
+          <article class="streak-message">
+            <span class="material-icons" aria-hidden="true">tips_and_updates</span>
+            <p>{{ message }}</p>
+          </article>
+        }
+      </section>
+
+      <section class="risk-section" aria-labelledby="risk-title">
+        <div class="section-heading">
+          <div>
+            <p class="section-kicker">Habits at risk</p>
+            <h2 id="risk-title">Protect these next</h2>
+          </div>
+        </div>
+
+        <div class="risk-grid">
+          @for (habit of view.habitsAtRisk; track habit.habitId) {
+            <article class="risk-card" data-testid="habit-risk-card">
+              <div class="risk-card__header">
+                <span class="habit-icon" aria-hidden="true">{{ habit.icon }}</span>
+                <div>
+                  <h3>{{ habit.title }}</h3>
+                  <p>{{ habit.message }}</p>
+                </div>
+                <span class="risk-pill" [class.risk-pill--high]="habit.riskLevel === 'high'">
+                  {{ getRiskLabel(habit) }}
+                </span>
+              </div>
+              <div class="risk-card__meta">
+                <span>{{ habit.currentStreak }} day streak</span>
+                <span>{{ habit.missedScheduledDatesCount }} missed this week</span>
+                <span>Next {{ formatDate(habit.nextScheduledDate) }}</span>
+              </div>
+            </article>
+          } @empty {
+            <article class="safe-card" data-testid="streaks-safe-state">
+              <span class="material-icons" aria-hidden="true">verified</span>
+              <div>
+                <h3>No habits at risk</h3>
+                <p>Your scheduled habits are protected right now.</p>
+              </div>
+            </article>
+          }
+        </div>
+      </section>
+
+      <section class="streak-list-section" aria-labelledby="habit-streak-title">
+        <div class="section-heading">
+          <div>
+            <p class="section-kicker">Habit streaks</p>
+            <h2 id="habit-streak-title">Every streak in motion</h2>
+          </div>
+        </div>
+
+        <div class="streak-list">
+          @for (habit of view.habitStreaks; track habit.habitId) {
+            <article
+              class="habit-streak-card"
+              data-testid="habit-streak-card"
+              [class.habit-streak-card--risk]="habit.status === 'at-risk'"
+            >
+              <div class="habit-streak-card__main">
+                <span class="habit-icon" aria-hidden="true">{{ habit.icon }}</span>
+                <div>
+                  <h3>{{ habit.title }}</h3>
+                  <p>{{ habit.message }}</p>
+                </div>
+              </div>
+
+              <div class="habit-streak-card__stats">
+                <span class="status-pill">{{ getStatusLabel(habit) }}</span>
+                <strong>{{ habit.currentStreak }}</strong>
+                <span>best {{ habit.longestStreak }}</span>
+                <span>{{ habit.completionRate }}%</span>
+              </div>
+            </article>
+          }
+        </div>
+      </section>
+    }
+  }
+</div>

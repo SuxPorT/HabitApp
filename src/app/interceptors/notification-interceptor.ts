@@ -14,6 +14,7 @@ export class NotificationInterceptor implements HttpInterceptor {
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     const skipLoading = req.headers.has('X-Skip-Loading');
+    const skipNotification = req.headers.has('X-Skip-Notification');
 
     if (!skipLoading) {
       this.loadingService.show();
@@ -21,16 +22,21 @@ export class NotificationInterceptor implements HttpInterceptor {
 
     return next.handle(req).pipe(
       tap((event: HttpEvent<any>) => {
-        if (event instanceof HttpResponse) {
+        if (event instanceof HttpResponse && !skipNotification) {
           this.handleSuccess(req.method);
         }
       }),
       catchError((error: HttpErrorResponse) => {
-        this.handleError(error);
+        if (!skipNotification) {
+          this.handleError(error);
+        }
+
         return throwError(() => error);
       }),
       finalize(() => {
-        this.loadingService.hide();
+        if (!skipLoading) {
+          this.loadingService.hide();
+        }
       })
     );
   }

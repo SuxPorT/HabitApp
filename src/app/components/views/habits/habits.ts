@@ -1,25 +1,36 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Observable, combineLatest } from 'rxjs';
 import { map, startWith, take } from 'rxjs/operators';
-import { Habit } from '../../../models/habit.model';
+import { Habit, HabitDashboardItem, HabitDashboardResponse } from '../../../models/habit.model';
+import { ReminderDashboard } from '../../../models/notification.model';
 import { UserResponse } from '../../../models/user-responde.model';
 import { HabitDialog } from '../dialogs/habit-dialog/habit-dialog';
 import { HabitService } from '../../../services/habit-service';
 import { LoadingService } from '../../../services/loading-service';
+import { NotificationService } from '../../../services/notification-service';
 import { UserService } from '../../../services/user-service';
 import { ConfirmDialog } from '../dialogs/confirm-dialog/confirm-dialog';
 
 interface HabitsViewModel {
-  habits: Habit[];
+  habits: HabitDashboardItem[];
   activeHabits: number;
+  dueToday: number;
   completedToday: number;
   completionPercent: number;
   currentStreak: number;
+  longestStreak: number;
   successRate: number;
   totalCompletions: number;
+  dashboardDate: string;
   motivationalMessage: string;
+  nextReminderLabel: string;
+  attentionCount: number;
+  attentionMessage: string;
+  smartReminderMessage: string;
+  hasReminderSummary: boolean;
 }
 
 @Component({
@@ -29,8 +40,6 @@ interface HabitsViewModel {
   standalone: false
 })
 export class Habits implements OnInit {
-  weekDays: string[] = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
-  currentDayIndex = new Date().getDay();
   greeting = this.buildGreeting(new Date());
   view$!: Observable<HabitsViewModel>;
   user$!: Observable<UserResponse | null>;
@@ -41,7 +50,9 @@ export class Habits implements OnInit {
     private habitService: HabitService,
     private userService: UserService,
     private dialog: MatDialog,
-    private loadingService: LoadingService
+    private loadingService: LoadingService,
+    private notificationService: NotificationService,
+    private snackBar: MatSnackBar
   ) { }
 
   ngOnInit(): void {
@@ -51,16 +62,18 @@ export class Habits implements OnInit {
     this.triggerRefresh();
 
     this.view$ = combineLatest([
-      this.habitService.habits$,
+      this.habitService.dashboard$,
+      this.notificationService.dashboard$,
       this.filterControl.valueChanges.pipe(startWith(''))
     ]).pipe(
-      map(([habits, filterValue]) => {
+      map(([dashboard, reminderDashboard, filterValue]) => {
         const search = filterValue.toLowerCase().trim();
+        const habits = dashboard?.activeHabits ?? [];
         const filteredHabits = search
           ? habits.filter(habit => habit.title.toLowerCase().includes(search))
           : habits;
 
-        return this.createViewModel(filteredHabits);
+        return this.createViewModel(dashboard, filteredHabits, reminderDashboard);
       })
     );
   }
@@ -69,11 +82,11 @@ export class Habits implements OnInit {
     return name?.trim().split(/\s+/)[0] || 'Victor';
   }
 
-  isHabitCompletedToday(habit: Habit): boolean {
-    return Boolean(habit.completedDays?.[this.currentDayIndex]);
+  isHabitCompletedToday(habit: HabitDashboardItem): boolean {
+    return habit.isCompletedToday;
   }
 
-  openNewHabitDialog(habit?: Habit, event?: Event): void {
+  openNewHabitDialog(habit?: HabitDashboardItem, event?: Event): void {
     event?.stopPropagation();
 
     const dialogRef = this.dialog.open(HabitDialog, {
@@ -82,14 +95,14 @@ export class Habits implements OnInit {
       panelClass: 'custom-dialog-container'
     });
 
-    dialogRef.afterClosed().subscribe((result?: Habit) => {
+    dialogRef.afterClosed().subscribe((result?: Partial<Habit>) => {
       if (result) this.handleSave(result);
     });
   }
 
-  handleSave(habit: Habit): void {
+  handleSave(habit: Partial<Habit>): void {
     if (habit.id) {
-      this.habitService.update(habit).subscribe({
+      this.habitService.update(habit as Habit).subscribe({
         next: () => this.triggerRefresh()
       });
     } else {
@@ -108,18 +121,24 @@ export class Habits implements OnInit {
     }
   }
 
-  toggleHabit(habitId: number, dayIndex: number): void {
-    this.habitService.toggleHabitDay(habitId, dayIndex).subscribe();
-  }
-
-  toggleToday(habit: Habit, event?: Event): void {
+  toggleToday(habit: HabitDashboardItem, event?: Event): void {
     event?.preventDefault();
     event?.stopPropagation();
 
-    this.toggleHabit(habit.id, this.currentDayIndex);
+    this.habitService.toggleCompletion(habit.id).subscribe({
+      next: () => this.triggerReminderRefresh(),
+      error: () => {
+        this.snackBar.open('Could not update this habit. Your progress was restored.', 'Close', {
+          duration: 4000,
+          horizontalPosition: 'center',
+          verticalPosition: 'bottom',
+          panelClass: ['snackbar-error']
+        });
+      }
+    });
   }
 
-  deleteHabit(habit: Habit, event?: Event): void {
+  deleteHabit(habit: HabitDashboardItem, event?: Event): void {
     event?.stopPropagation();
 
     const dialogRef = this.dialog.open(ConfirmDialog, {
@@ -141,28 +160,66 @@ export class Habits implements OnInit {
     });
   }
 
-  private createViewModel(habits: Habit[]): HabitsViewModel {
-    const activeHabits = habits.length;
-    const completedToday = habits.filter(habit => this.isHabitCompletedToday(habit)).length;
-    const totalCompletions = habits.reduce(
-      (total, habit) => total + habit.completedDays.filter(Boolean).length,
-      0
-    );
-    const totalPossible = activeHabits * this.weekDays.length;
-    const completionPercent = activeHabits ? Math.round((completedToday / activeHabits) * 100) : 0;
-    const successRate = totalPossible ? Math.round((totalCompletions / totalPossible) * 100) : 0;
-    const currentStreak = Math.max(0, ...habits.map(habit => habit.streak || 0));
+  archiveHabit(habit: HabitDashboardItem, event?: Event): void {
+    event?.stopPropagation();
+
+    this.habitService.archiveHabit(habit.id, true).subscribe();
+  }
+
+  getWeekdayLabel(dayOfWeek: string): string {
+    return dayOfWeek.slice(0, 1);
+  }
+
+  isDashboardDate(indicatorDate: string, dashboardDate: string): boolean {
+    return indicatorDate === dashboardDate;
+  }
+
+  private createViewModel(
+    dashboard: HabitDashboardResponse | null,
+    habits: HabitDashboardItem[],
+    reminderDashboard: ReminderDashboard | null
+  ): HabitsViewModel {
+    const activeHabits = dashboard?.dailyProgress.totalHabits ?? 0;
+    const dueToday = dashboard?.dailyProgress.dueToday ?? 0;
+    const completedToday = dashboard?.dailyProgress.completedToday ?? 0;
+    const completionPercent = dashboard?.dailyProgress.completionRate ?? 0;
+    const successRate = dashboard?.weeklySuccessRate ?? 0;
+    const totalCompletions = dashboard?.totalCompletions ?? 0;
+    const currentStreak = Math.max(0, ...(dashboard?.activeHabits.map(habit => habit.currentStreak) ?? []));
+    const longestStreak = Math.max(0, ...(dashboard?.activeHabits.map(habit => habit.longestStreak) ?? []));
+
+    const nextReminderLabel = this.getNextReminderLabel(reminderDashboard);
+    const attentionCount = reminderDashboard?.habitsAtRisk.length ?? 0;
+    const attentionMessage = reminderDashboard?.habitsAtRisk[0]?.message ?? '';
+    const smartReminderMessage = reminderDashboard?.smartMotivations[0] ?? '';
 
     return {
       habits,
       activeHabits,
+      dueToday,
       completedToday,
       completionPercent,
       currentStreak,
+      longestStreak,
       successRate,
       totalCompletions,
-      motivationalMessage: this.getMotivationalMessage(activeHabits, completedToday)
+      dashboardDate: dashboard?.date ?? '',
+      motivationalMessage: this.getMotivationalMessage(activeHabits, completedToday),
+      nextReminderLabel,
+      attentionCount,
+      attentionMessage,
+      smartReminderMessage,
+      hasReminderSummary: Boolean(nextReminderLabel || attentionCount || smartReminderMessage)
     };
+  }
+
+  private getNextReminderLabel(reminderDashboard: ReminderDashboard | null): string {
+    if (!reminderDashboard?.nextReminder) {
+      return '';
+    }
+
+    const time = reminderDashboard.nextReminder.reminderTime.slice(0, 5);
+    return `${time} · ${reminderDashboard.nextReminder.title}`;
   }
 
   private getMotivationalMessage(activeHabits: number, completedToday: number): string {
@@ -202,6 +259,15 @@ export class Habits implements OnInit {
     this.userService.getUser().pipe(take(1)).subscribe((user) => {
       if (user && user.id) {
         this.habitService.refreshByUserId(user.id);
+        this.notificationService.refreshByUserId(user.id);
+      }
+    });
+  }
+
+  private triggerReminderRefresh(): void {
+    this.userService.getUser().pipe(take(1)).subscribe((user) => {
+      if (user?.id) {
+        this.notificationService.refreshByUserId(user.id);
       }
     });
   }

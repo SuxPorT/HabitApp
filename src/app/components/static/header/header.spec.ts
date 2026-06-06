@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { RouterModule } from '@angular/router';
+import { provideRouter } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { MatMenuModule } from '@angular/material/menu';
 import { BehaviorSubject, Observable, of } from 'rxjs';
@@ -34,7 +35,7 @@ describe('Header', () => {
 
     await TestBed.configureTestingModule({
       declarations: [Header],
-      imports: [CommonModule, MatMenuModule],
+      imports: [CommonModule, MatMenuModule, RouterModule],
       providers: [
         {
           provide: UserService,
@@ -49,12 +50,7 @@ describe('Header', () => {
             open: vi.fn(),
           },
         },
-        {
-          provide: Router,
-          useValue: {
-            navigate: vi.fn(),
-          },
-        },
+        provideRouter([]),
         {
           provide: ThemeService,
           useValue: themeService,
@@ -66,8 +62,17 @@ describe('Header', () => {
     fixture.detectChanges();
   });
 
+  afterEach(() => {
+    fixture.destroy();
+    document.body.classList.remove(
+      'app-shell-authenticated',
+      'app-sidebar-collapsed',
+      'app-sidebar-open',
+    );
+  });
+
   it('calls ThemeService when the theme control is clicked', () => {
-    const themeButton = fixture.nativeElement.querySelector('.theme-toggle') as HTMLButtonElement;
+    const themeButton = fixture.nativeElement.querySelector('.sidebar-utility') as HTMLButtonElement;
 
     themeButton.click();
 
@@ -81,5 +86,35 @@ describe('Header', () => {
     expect(header.textContent).toContain(user.name);
     expect(profileButton).toBeTruthy();
     expect(profileButton.getAttribute('aria-label')).toContain(user.name);
+  });
+
+  it('renders the primary navigation inside the sidebar', () => {
+    const header = fixture.nativeElement as HTMLElement;
+    const links = Array.from(header.querySelectorAll('.sidebar-nav__label')).map((link) =>
+      link.textContent?.trim(),
+    );
+
+    expect(links).toEqual([
+      'Dashboard',
+      'Insights',
+      'Streaks',
+      'Achievements',
+      'Recurrences',
+      'Notifications',
+    ]);
+  });
+
+  it('toggles the collapsible sidebar state', () => {
+    const header = fixture.nativeElement as HTMLElement;
+    const toggle = header.querySelector('.sidebar-toggle') as HTMLButtonElement;
+
+    expect(header.querySelector('.sidebar-shell--collapsed')).toBeFalsy();
+    expect(document.body.classList.contains('app-sidebar-open')).toBe(true);
+
+    toggle.click();
+    fixture.detectChanges();
+
+    expect(header.querySelector('.sidebar-shell--collapsed')).toBeTruthy();
+    expect(document.body.classList.contains('app-sidebar-collapsed')).toBe(true);
   });
 });

@@ -1,0 +1,221 @@
+<div class="container insights-shell">
+  @if (loading) {
+    <section class="insights-loading" data-testid="insights-loading" aria-live="polite">
+      <span class="spinner-border" aria-hidden="true"></span>
+      <span>Reading your patterns...</span>
+    </section>
+  } @else if (errorMessage) {
+    <section class="empty-state" data-testid="insights-error">
+      <span class="material-icons empty-state__icon" aria-hidden="true">insights</span>
+      <h1>Insights are unavailable</h1>
+      <p>{{ errorMessage }}</p>
+      <button type="button" class="btn insights-secondary" (click)="loadInsights()">
+        <span class="material-icons" aria-hidden="true">refresh</span>
+        <span>Try again</span>
+      </button>
+    </section>
+  } @else if (view; as insightsView) {
+    <section class="insights-hero" aria-labelledby="insights-title">
+      <div>
+        <p class="section-kicker">Insights</p>
+        <h1 id="insights-title">Your consistency, clearly mapped.</h1>
+        <p>
+          Patterns are calculated from scheduled habit days, completions and streak history.
+        </p>
+      </div>
+      <div class="hero-score" aria-label="Average completion rate">
+        <span>{{ insightsView.overview.averageCompletionRate }}%</span>
+        <small>{{ getCompletionCopy(insightsView.overview.averageCompletionRate) }}</small>
+      </div>
+    </section>
+
+    @if (!hasInsightData(insightsView.overview)) {
+      <section class="empty-state" data-testid="insights-empty-state">
+        <span class="material-icons empty-state__icon" aria-hidden="true">auto_graph</span>
+        <h2>Complete a few habits to unlock insights.</h2>
+        <p>Your patterns will appear here after a few days of tracking.</p>
+      </section>
+    } @else {
+      <section class="insight-message-grid" aria-label="Personal insights">
+        @for (message of insightsView.insightMessages; track message) {
+          <article class="insight-message">
+            <span class="material-icons" aria-hidden="true">tips_and_updates</span>
+            <p>{{ message }}</p>
+          </article>
+        }
+      </section>
+
+      <section class="overview-grid" aria-label="Analytics overview">
+        <article class="metric-card">
+          <span class="metric-card__label">Active habits</span>
+          <strong>{{ insightsView.overview.totalActiveHabits }}</strong>
+          <small>currently tracked</small>
+        </article>
+        <article class="metric-card">
+          <span class="metric-card__label">Completion rate</span>
+          <strong>{{ insightsView.overview.averageCompletionRate }}%</strong>
+          <small>scheduled days only</small>
+        </article>
+        <article class="metric-card">
+          <span class="metric-card__label">Overall streak</span>
+          <strong>{{ insightsView.overview.currentOverallStreak }}</strong>
+          <small>best {{ insightsView.overview.longestOverallStreak }} days</small>
+        </article>
+        <article class="metric-card">
+          <span class="metric-card__label">Completions</span>
+          <strong>{{ insightsView.overview.totalCompletions }}</strong>
+          <small>total checks</small>
+        </article>
+      </section>
+
+      <section class="trend-layout" aria-label="Completion trends">
+        <article class="chart-card">
+          <div class="section-heading">
+            <div>
+              <p class="section-kicker">Weekly trend</p>
+              <h2>Last 7 days</h2>
+            </div>
+            <span>{{ insightsView.trends.last7Days.completionRate }}%</span>
+          </div>
+          <div class="bar-chart bar-chart--weekly">
+            @for (day of insightsView.overview.weeklyCompletionTrend; track day.date) {
+              <span
+                class="trend-bar"
+                [class.trend-bar--empty]="!day.scheduledHabits"
+                [style.height.%]="getBarHeight(day)"
+                [title]="formatDate(day.date) + ': ' + day.completionRate + '%'"
+              ></span>
+            }
+          </div>
+        </article>
+
+        <article class="chart-card">
+          <div class="section-heading">
+            <div>
+              <p class="section-kicker">Monthly trend</p>
+              <h2>Last 30 days</h2>
+            </div>
+            <span>{{ getTrendAverage(insightsView.overview.monthlyCompletionTrend) }}%</span>
+          </div>
+          <div class="bar-chart bar-chart--monthly">
+            @for (day of insightsView.overview.monthlyCompletionTrend; track day.date) {
+              <span
+                class="trend-bar"
+                [class.trend-bar--empty]="!day.scheduledHabits"
+                [style.height.%]="getBarHeight(day)"
+                [title]="formatDate(day.date) + ': ' + day.completionRate + '%'"
+              ></span>
+            }
+          </div>
+        </article>
+      </section>
+
+      <section class="pattern-grid" aria-label="Best and weakest patterns">
+        <article class="pattern-card">
+          <span class="pattern-card__eyebrow">Best habit</span>
+          <h2>{{ insightsView.overview.bestHabit?.title || 'No pattern yet' }}</h2>
+          <p>
+            {{ insightsView.overview.bestHabit?.completionRate || 0 }}% completion,
+            {{ insightsView.overview.bestHabit?.currentStreak || 0 }} day streak.
+          </p>
+        </article>
+        <article class="pattern-card">
+          <span class="pattern-card__eyebrow">Weakest habit</span>
+          <h2>{{ insightsView.overview.weakestHabit?.title || 'No pattern yet' }}</h2>
+          <p>
+            {{ insightsView.overview.weakestHabit?.completionRate || 0 }}% completion.
+            A smaller schedule can make this easier.
+          </p>
+        </article>
+        <article class="pattern-card">
+          <span class="pattern-card__eyebrow">Best weekday</span>
+          <h2>{{ formatWeekday(insightsView.overview.bestDayOfWeek?.dayOfWeek) }}</h2>
+          <p>{{ insightsView.overview.bestDayOfWeek?.completionRate || 0 }}% on scheduled habits.</p>
+        </article>
+        <article class="pattern-card">
+          <span class="pattern-card__eyebrow">Weakest weekday</span>
+          <h2>{{ formatWeekday(insightsView.overview.weakestDayOfWeek?.dayOfWeek) }}</h2>
+          <p>{{ insightsView.overview.weakestDayOfWeek?.completionRate || 0 }}% on scheduled habits.</p>
+        </article>
+      </section>
+
+      <section class="calendar-card" aria-labelledby="calendar-title">
+        <div class="section-heading">
+          <div>
+            <p class="section-kicker">Calendar heatmap</p>
+            <h2 id="calendar-title">Last 90 days</h2>
+          </div>
+          <span>{{ insightsView.trends.last90Days.completionRate }}%</span>
+        </div>
+        <div class="calendar-heatmap" data-testid="calendar-heatmap" aria-label="Habit calendar heatmap">
+          @for (day of insightsView.calendar.days; track day.date) {
+            <span
+              class="heatmap-cell"
+              [class.heatmap-cell--perfect]="day.status === 'perfect'"
+              [class.heatmap-cell--partial]="day.status === 'partial'"
+              [class.heatmap-cell--missed]="day.status === 'missed'"
+              [class.heatmap-cell--none]="day.status === 'none'"
+              [title]="getCalendarTitle(day)"
+              [attr.aria-label]="getCalendarTitle(day)"
+            ></span>
+          }
+        </div>
+        <div class="calendar-legend" aria-hidden="true">
+          <span>None</span>
+          <span class="heatmap-cell heatmap-cell--none"></span>
+          <span class="heatmap-cell heatmap-cell--missed"></span>
+          <span class="heatmap-cell heatmap-cell--partial"></span>
+          <span class="heatmap-cell heatmap-cell--perfect"></span>
+          <span>Perfect</span>
+        </div>
+      </section>
+
+      <section class="habit-breakdown" aria-labelledby="habit-breakdown-title">
+        <div class="section-heading">
+          <div>
+            <p class="section-kicker">Habit breakdown</p>
+            <h2 id="habit-breakdown-title">Where each habit stands</h2>
+          </div>
+        </div>
+
+        <div class="habit-breakdown-grid">
+          @for (habit of insightsView.habitBreakdown; track habit.habitId) {
+            <article class="habit-insight-card" data-testid="habit-insight-card">
+              <div class="habit-insight-card__header">
+                <span class="habit-insight-card__icon" aria-hidden="true">{{ habit.icon }}</span>
+                <div>
+                  <h3>{{ habit.title }}</h3>
+                  <p>{{ getCompletionCopy(habit.completionRate) }}</p>
+                </div>
+              </div>
+
+              <div
+                class="habit-progress"
+                role="progressbar"
+                [attr.aria-valuenow]="habit.completionRate"
+                aria-valuemin="0"
+                aria-valuemax="100"
+                [attr.aria-label]="habit.title + ' completion rate'"
+              >
+                <span [style.width.%]="habit.completionRate"></span>
+              </div>
+
+              <div class="habit-insight-card__stats">
+                <span>{{ habit.completionRate }}%</span>
+                <span>{{ habit.currentStreak }} day streak</span>
+                <span>{{ getMissedCountLabel(habit) }}</span>
+                <span>Last {{ getLastCompletedLabel(habit) }}</span>
+              </div>
+            </article>
+          } @empty {
+            <div class="empty-state empty-state--compact">
+              <span class="material-icons empty-state__icon" aria-hidden="true">query_stats</span>
+              <h2>Habit patterns need more history.</h2>
+              <p>Complete scheduled habits to build a clearer breakdown.</p>
+            </div>
+          }
+        </div>
+      </section>
+    }
+  }
+</div>

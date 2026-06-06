@@ -285,10 +285,17 @@
 
 .habit-streak {
   gap: 0.25rem;
-  margin: 0.3rem 0 0;
+  margin: 0.2rem 0 0;
   color: global.$text-muted;
   font-size: 0.8rem;
   font-weight: 750;
+}
+
+.habit-recurrence {
+  margin: 0.24rem 0 0;
+  color: global.$text-subtle;
+  font-size: 0.74rem;
+  font-weight: 800;
 }
 
 .habit-streak .material-icons {
@@ -306,10 +313,17 @@
 }
 
 .week-indicator {
-  width: 1rem;
-  height: 1rem;
+  width: 1.15rem;
+  height: 1.35rem;
   display: grid;
   place-items: center;
+  gap: 0.12rem;
+}
+
+.week-indicator__label {
+  color: global.$text-subtle;
+  font-size: 0.56rem;
+  font-weight: 800;
 }
 
 .week-indicator__dot {
@@ -456,6 +470,7 @@
     grid-template-columns: minmax(0, 1fr) 270px;
     align-items: end;
   }
+
 }
 
 @media (max-width: 575.98px) {

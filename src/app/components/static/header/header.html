@@ -1,17 +1,74 @@
 @let resolvedTheme = resolvedTheme$ | async;
 
 @if (isLoggedIn$ | async; as user) {
-  <header class="header-container sticky-top">
+  <aside
+    class="sidebar-shell"
+    [class.sidebar-shell--collapsed]="isSidebarCollapsed"
+    aria-label="Primary navigation"
+  >
+    <div class="sidebar-brand">
+      <button
+        type="button"
+        class="sidebar-toggle"
+        (click)="toggleSidebar()"
+        [attr.aria-label]="isSidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'"
+        [attr.aria-expanded]="!isSidebarCollapsed"
+      >
+        <span class="material-icons" aria-hidden="true">
+          {{ isSidebarCollapsed ? 'menu' : 'keyboard_double_arrow_left' }}
+        </span>
+      </button>
+    </div>
+
+    <nav class="sidebar-nav" aria-label="Primary">
+      @for (item of navigationItems; track item.link) {
+        <a
+          [routerLink]="item.link"
+          routerLinkActive="active"
+          ariaCurrentWhenActive="page"
+          class="sidebar-nav__link"
+          [attr.aria-label]="item.label"
+          [title]="isSidebarCollapsed ? item.label : null"
+        >
+          <span class="material-icons sidebar-nav__icon" aria-hidden="true">{{ item.icon }}</span>
+          <span class="sidebar-nav__label">{{ item.label }}</span>
+        </a>
+      }
+    </nav>
+
+    <div class="sidebar-footer">
+      <button
+        type="button"
+        class="sidebar-utility"
+        (click)="toggleTheme()"
+        [attr.aria-label]="resolvedTheme === 'dark' ? 'Use light theme' : 'Use dark theme'"
+        [attr.aria-pressed]="resolvedTheme === 'dark'"
+        [title]="isSidebarCollapsed ? (resolvedTheme === 'dark' ? 'Light theme' : 'Dark theme') : null"
+      >
+        <span class="material-icons sidebar-utility__icon" aria-hidden="true">
+          {{ resolvedTheme === 'dark' ? 'dark_mode' : 'light_mode' }}
+        </span>
+        <span class="sidebar-utility__label">
+          {{ resolvedTheme === 'dark' ? 'Dark mode' : 'Light mode' }}
+        </span>
+      </button>
+    </div>
+  </aside>
+
+  <header
+    class="header-container sticky-top"
+    [class.header-container--collapsed]="isSidebarCollapsed"
+  >
     <div class="container header-inner">
-      <div class="brand-lockup" aria-label="HabitApp">
+      <a routerLink="/habits" class="brand-lockup" aria-label="HabitApp dashboard">
         <span class="brand-mark" aria-hidden="true">
           <img src="app-logo.svg" alt="" class="brand-logo" />
         </span>
         <span class="brand-copy">
           <span class="brand-kicker">HabitApp</span>
-          <span class="header-title">Habits</span>
+          <span class="sidebar-title">Habits</span>
         </span>
-      </div>
+      </a>
 
       <div class="header-actions">
         <div class="profile-container">
@@ -46,17 +103,6 @@
             <span>Sign Out</span>
           </button>
         </mat-menu>
-        <button
-          type="button"
-          class="theme-toggle"
-          (click)="toggleTheme()"
-          [attr.aria-label]="resolvedTheme === 'dark' ? 'Use light theme' : 'Use dark theme'"
-          [attr.aria-pressed]="resolvedTheme === 'dark'"
-        >
-          <span class="material-icons theme-toggle__icon" aria-hidden="true">
-            {{ resolvedTheme === 'dark' ? 'dark_mode' : 'light_mode' }}
-          </span>
-        </button>
       </div>
     </div>
   </header>

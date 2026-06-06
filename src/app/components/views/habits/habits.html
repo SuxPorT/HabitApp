@@ -26,7 +26,7 @@
       <div class="daily-progress-card" aria-label="Daily progress summary">
         <div class="daily-progress-card__header">
           <span>Daily progress</span>
-          <strong>{{ habitsView.completedToday }}/{{ habitsView.activeHabits }}</strong>
+          <strong>{{ habitsView.completedToday }}/{{ habitsView.dueToday }}</strong>
         </div>
         <div
           class="daily-progress"
@@ -40,7 +40,7 @@
         </div>
         <div class="daily-progress-card__meta">
           <span>{{ habitsView.completionPercent }}% complete</span>
-          <span>{{ weekDays[currentDayIndex] }} is today</span>
+          <span>{{ habitsView.activeHabits }} active</span>
         </div>
       </div>
     </section>
@@ -68,6 +68,40 @@
         <span class="material-icons" aria-hidden="true">add</span>
       </button>
     </section>
+
+    @if (habitsView.hasReminderSummary) {
+      <section class="reminder-summary" aria-label="Reminder summary">
+        @if (habitsView.nextReminderLabel) {
+          <article class="stat-card reminder-summary__item">
+            <span class="material-icons" aria-hidden="true">schedule</span>
+            <div>
+              <span>Next reminder</span>
+              <span>{{ habitsView.nextReminderLabel }}</span>
+            </div>
+          </article>
+        }
+
+        @if (habitsView.attentionCount) {
+          <article class="stat-card reminder-summary__item">
+            <span class="material-icons" aria-hidden="true">notification_important</span>
+            <div>
+              <span>{{ habitsView.attentionCount }} requiring attention</span>
+              <span>{{ habitsView.attentionMessage }}</span>
+            </div>
+          </article>
+        }
+
+        @if (habitsView.smartReminderMessage) {
+          <article class="stat-card reminder-summary__item">
+            <span class="material-icons" aria-hidden="true">tips_and_updates</span>
+            <div>
+              <span>Smart nudge</span>
+              <span>{{ habitsView.smartReminderMessage }}</span>
+            </div>
+          </article>
+        }
+      </section>
+    }
 
     <main class="today-section" aria-label="Today habit completion">
       <div class="section-heading">
@@ -103,25 +137,33 @@
 
               <div class="habit-copy">
                 <h3 class="habit-name">{{ habit.title }}</h3>
+                <p class="habit-recurrence">{{ habit.recurrenceLabel }}</p>
                 <p class="habit-streak">
                   <span class="material-icons" aria-hidden="true">local_fire_department</span>
-                  <span>{{ habit.streak }} day streak</span>
+                  <span>{{ habit.currentStreak }} day streak</span>
                 </p>
                 <div
                   class="week-strip"
                   role="list"
                   [attr.aria-label]="'Weekly indicators for ' + habit.title"
                 >
-                  @for (done of habit.completedDays; track $index; let dayIndex = $index) {
+                  @for (indicator of habit.weeklyIndicators; track indicator.date) {
                     <span
                       class="week-indicator"
                       role="listitem"
-                      [class.done]="done"
-                      [class.today]="dayIndex === currentDayIndex"
-                      [attr.aria-label]="weekDays[dayIndex] + ': ' + (done ? 'completed' : 'open')"
+                      [class.done]="indicator.isCompleted"
+                      [class.due]="indicator.isDue"
+                      [class.today]="isDashboardDate(indicator.date, habitsView.dashboardDate)"
+                      [attr.aria-label]="
+                        indicator.dayOfWeek + ': '
+                        + (indicator.isCompleted ? 'completed' : indicator.isDue ? 'open' : 'not scheduled')
+                      "
                     >
-                  <span class="week-indicator__dot" aria-hidden="true"></span>
-                </span>
+                      <span class="week-indicator__label" aria-hidden="true">
+                        {{ getWeekdayLabel(indicator.dayOfWeek) }}
+                      </span>
+                      <span class="week-indicator__dot" aria-hidden="true"></span>
+                    </span>
                   }
                 </div>
               </div>
@@ -149,6 +191,10 @@
                 <span class="material-icons habit-menu-icon" aria-hidden="true">edit</span>
                 <span>Edit</span>
               </button>
+              <button mat-menu-item (click)="archiveHabit(habit, $event)">
+                <span class="material-icons habit-menu-icon" aria-hidden="true">archive</span>
+                <span>Archive</span>
+              </button>
               <button mat-menu-item class="habit-menu-danger" (click)="deleteHabit(habit, $event)">
                 <span class="material-icons habit-menu-icon" aria-hidden="true">delete</span>
                 <span>Delete</span>
@@ -173,7 +219,7 @@
       <article class="stat-card">
         <span class="stat-card__label">Current streak</span>
         <strong>{{ habitsView.currentStreak }}</strong>
-        <span>days</span>
+        <span>best {{ habitsView.longestStreak }} days</span>
       </article>
       <article class="stat-card">
         <span class="stat-card__label">Success rate</span>

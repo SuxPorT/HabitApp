@@ -163,6 +163,9 @@ app-root {
 .btn:focus-visible,
 .tab-btn:focus-visible,
 .theme-toggle:focus-visible,
+.sidebar-toggle:focus-visible,
+.sidebar-nav__link:focus-visible,
+.sidebar-utility:focus-visible,
 .btn-avatar:focus-visible,
 .icon-choice-btn:focus-visible,
 .footer-link:focus-visible,
@@ -362,9 +365,9 @@ app-root {
 .dialog-heading h2 {
   margin: 0;
   color: global.$text-main;
-  font-size: clamp(1.45rem, 3vw, 1.85rem);
-  font-weight: 900;
-  line-height: 1.08;
+  font-size: clamp(1rem, 4vw, 1.72rem);
+  font-weight: 850;
+  line-height: 0.98;
   overflow-wrap: anywhere;
 }
 

@@ -1,0 +1,169 @@
+<div class="container recurrences-shell">
+  <section class="recurrences-hero">
+    <div>
+      <p class="section-kicker">Recurrences</p>
+      <h1>Schedule rules</h1>
+      <p>Group habits by rhythm and adjust schedules without changing each habit one by one.</p>
+    </div>
+    <span class="pattern-count">{{ patterns.length }} patterns</span>
+  </section>
+
+  <section class="bulk-panel" aria-label="Bulk recurrence assignment">
+    <div>
+      <p class="section-kicker">Bulk assign</p>
+      <h2>{{ selectedHabitIds.size }} selected</h2>
+    </div>
+    <div class="recurrence-editor">
+      <select
+        class="form-select theme-input"
+        [(ngModel)]="bulkEditor.recurrenceType"
+        (ngModelChange)="ensureSpecificDays(bulkEditor)"
+        aria-label="Bulk recurrence type"
+      >
+        <option *ngFor="let option of recurrenceOptions" [value]="option.value">
+          {{ option.label }}
+        </option>
+      </select>
+
+      <div *ngIf="bulkEditor.recurrenceType === 'SpecificDaysOfWeek'" class="weekday-row">
+        <button
+          type="button"
+          *ngFor="let day of weekDays"
+          class="weekday-choice"
+          [class.selected]="isEditorDaySelected(bulkEditor, day.value)"
+          (click)="toggleEditorDay(bulkEditor, day.value)"
+        >
+          {{ day.label }}
+        </button>
+      </div>
+
+      <label *ngIf="bulkEditor.recurrenceType === 'EveryXDays'" class="number-row">
+        <span>Every</span>
+        <input
+          type="number"
+          class="form-control theme-input"
+          min="1"
+          max="30"
+          [(ngModel)]="bulkEditor.intervalDays"
+        />
+        <span>days</span>
+      </label>
+
+      <label *ngIf="bulkEditor.recurrenceType === 'Monthly'" class="number-row">
+        <span>Day</span>
+        <input
+          type="number"
+          class="form-control theme-input"
+          min="1"
+          max="31"
+          [(ngModel)]="bulkEditor.monthlyDay"
+        />
+      </label>
+
+      <button
+        type="button"
+        class="btn recurrence-primary"
+        [disabled]="!selectedHabitIds.size"
+        (click)="applyToSelected()"
+      >
+        Apply
+      </button>
+    </div>
+  </section>
+
+  <section class="pattern-list" aria-label="Recurrence patterns">
+    @for (pattern of patterns; track pattern.key) {
+      <article class="pattern-card" data-testid="recurrence-pattern-card">
+        <header class="pattern-card__header">
+          <div>
+            <p class="section-kicker">{{ pattern.habits.length }} habits</p>
+            <h2>{{ pattern.label }}</h2>
+          </div>
+          <button type="button" class="btn pattern-edit" (click)="editPattern(pattern)">
+            <span class="material-icons" aria-hidden="true">tune</span>
+            <span>Edit rule</span>
+          </button>
+        </header>
+
+        <div class="habit-row-list">
+          @for (habit of pattern.habits; track habit.id) {
+            <label class="habit-row">
+              <input
+                type="checkbox"
+                [checked]="isHabitSelected(habit.id)"
+                (change)="toggleHabitSelection(habit.id)"
+              />
+              <span class="habit-row__icon" aria-hidden="true">{{ habit.icon }}</span>
+              <span class="habit-row__title">{{ habit.title }}</span>
+            </label>
+          }
+        </div>
+
+        @if (editingPatternKey === pattern.key) {
+          <div class="pattern-editor" data-testid="pattern-editor">
+            <select
+              class="form-select theme-input"
+              [(ngModel)]="patternEditor.recurrenceType"
+              (ngModelChange)="ensureSpecificDays(patternEditor)"
+              aria-label="Pattern recurrence type"
+            >
+              <option *ngFor="let option of recurrenceOptions" [value]="option.value">
+                {{ option.label }}
+              </option>
+            </select>
+
+            <div *ngIf="patternEditor.recurrenceType === 'SpecificDaysOfWeek'" class="weekday-row">
+              <button
+                type="button"
+                *ngFor="let day of weekDays"
+                class="weekday-choice"
+                [class.selected]="isEditorDaySelected(patternEditor, day.value)"
+                (click)="toggleEditorDay(patternEditor, day.value)"
+              >
+                {{ day.label }}
+              </button>
+            </div>
+
+            <label *ngIf="patternEditor.recurrenceType === 'EveryXDays'" class="number-row">
+              <span>Every</span>
+              <input
+                type="number"
+                class="form-control theme-input"
+                min="1"
+                max="30"
+                [(ngModel)]="patternEditor.intervalDays"
+              />
+              <span>days</span>
+            </label>
+
+            <label *ngIf="patternEditor.recurrenceType === 'Monthly'" class="number-row">
+              <span>Day</span>
+              <input
+                type="number"
+                class="form-control theme-input"
+                min="1"
+                max="31"
+                [(ngModel)]="patternEditor.monthlyDay"
+              />
+            </label>
+
+            <div class="pattern-editor__actions">
+              <button type="button" class="btn recurrence-secondary" (click)="cancelPatternEdit()">
+                Cancel
+              </button>
+              <button type="button" class="btn recurrence-primary" (click)="applyToPattern(pattern)">
+                Update all
+              </button>
+            </div>
+          </div>
+        }
+      </article>
+    } @empty {
+      <div class="empty-state">
+        <span class="material-icons empty-state__icon" aria-hidden="true">event_repeat</span>
+        <h2>No recurrence patterns yet</h2>
+        <p>Create habits to start organizing their schedules.</p>
+      </div>
+    }
+  </section>
+</div>

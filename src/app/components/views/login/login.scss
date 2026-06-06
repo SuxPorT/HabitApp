@@ -84,8 +84,8 @@
   max-width: 11ch;
   margin: 0.75rem 0 1rem;
   color: global.$text-main;
-  font-size: clamp(2.2rem, 5vw, 4.4rem);
-  font-weight: 900;
+  font-size: clamp(1rem, 4vw, 1.72rem);
+  font-weight: 850;
   line-height: 0.98;
 }
 
@@ -261,7 +261,4 @@
     height: 44px;
   }
 
-  .story-copy h1 {
-    font-size: 2.1rem;
-  }
 }
