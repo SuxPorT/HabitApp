@@ -1,39 +1,38 @@
 @use 'variables' as global;
 
-.dialog-title {
-  color: #ff5252;
-  padding-top: 1rem;
+:host {
+  display: block;
 }
 
-.text-main {
-  color: global.$text-main;
-}
+.confirm-dialog {
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, global.$danger-container 38%, transparent),
+      transparent 54%
+    ),
+    global.$surface-low;
 
-.btn-cancel {
-  background-color: transparent;
-  color: global.$text-muted;
-  border: 1px solid global.$outline;
-  border-radius: 12px;
-  padding: 0.6rem 1.2rem;
-  font-weight: 600;
-  transition: all 0.2s;
-
-  &:hover {
-    background-color: global.$outline;
-    color: global.$text-main;
+  .dialog-icon {
+    border-color: color-mix(in srgb, global.$danger-color 38%, global.$outline);
+    background-color: global.$danger-container;
+    color: global.$danger-color;
   }
 }
 
-.btn-danger-action {
-  background-color: #ff5252;
-  color: #ffffff;
-  border: none;
-  border-radius: 12px;
-  padding: 0.6rem 1.2rem;
-  font-weight: 600;
-  transition: all 0.2s;
+.confirm-message {
+  margin: 0;
+  padding: 1rem;
+  border: 1px solid color-mix(in srgb, global.$danger-color 26%, global.$outline);
+  border-radius: global.$radius-lg;
+  background-color: color-mix(in srgb, global.$danger-container 36%, global.$surface-low);
+  color: global.$text-main;
+  font-size: 0.98rem;
+  font-weight: 650;
+  line-height: 1.6;
 
-  &:hover {
-    filter: brightness(0.9);
+  strong {
+    color: global.$danger-color;
+    font-weight: 900;
   }
 }

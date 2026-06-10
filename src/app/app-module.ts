@@ -18,9 +18,29 @@ import { Login } from './components/views/login/login';
 import { Habits } from './components/views/habits/habits';
 import { ConfirmDialog } from './components/views/dialogs/confirm-dialog/confirm-dialog';
 import { UserDialog } from './components/views/dialogs/user-dialog/user-dialog';
+import { Recurrences } from './components/views/recurrences/recurrences';
+import { Insights } from './components/views/insights/insights';
+import { Streaks } from './components/views/streaks/streaks';
+import { Achievements } from './components/views/achievements/achievements';
+import { Notifications } from './components/views/notifications/notifications';
 
 @NgModule({
-  declarations: [App, Header, Body, Footer, HabitDialog, Login, Habits, ConfirmDialog, UserDialog],
+  declarations: [
+    App,
+    Header,
+    Body,
+    Footer,
+    HabitDialog,
+    Login,
+    Habits,
+    ConfirmDialog,
+    UserDialog,
+    Recurrences,
+    Insights,
+    Streaks,
+    Achievements,
+    Notifications
+  ],
   imports: [
     BrowserModule,
     AppRoutingModule,
